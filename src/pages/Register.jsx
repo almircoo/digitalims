@@ -61,6 +61,7 @@ export const Register = () => {
                 <Input
                   id="nombre"
                   type="text"
+                  name="nombre"
                   placeholder="Ingrese nombre"
                   value={formData.nombre}
                   onChange={handleChange}
@@ -72,6 +73,7 @@ export const Register = () => {
                 <Input
                   id="apellido"
                   type="text"
+                  name="apellido"
                   placeholder="Ingrese apellidos"
                   value={formData.apellido}
                   onChange={handleChange}
@@ -83,6 +85,7 @@ export const Register = () => {
                 <Input
                   id="dni"
                   type="text"
+                  name="dni"
                   placeholder="Ingrese D.N.I"
                   value={formData.dni}
                   onChange={handleChange}
@@ -94,6 +97,7 @@ export const Register = () => {
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="Ingrese email"
                   value={formData.email}
                   onChange={handleChange}
@@ -101,24 +105,12 @@ export const Register = () => {
                 />
               </div>
 
-              {/* <div className='space-y-2'>
-                <Label >Tipo de Cuenta</Label>
-                <Select name="role" value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tipo de cuenta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='USER'>Usuario</SelectItem>
-                    <SelectItem value='ADMIN'>Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div> */}
-
               <div className="space-y-2">
                 <Label htmlFor="password">Contrasena</Label>
                 <Input
                   id="password"
                   type="password"
+                  name="password"
                   placeholder="Ingrese contrasena"
                   value={formData.password}
                   onChange={handleChange}
