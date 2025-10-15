@@ -16,11 +16,11 @@ export default defineConfig( ({ mode }) => {
       port: 5173,
       proxy: {
         "/v1": {
-          target: backendHost,
+          target: "http://localhost:8080",
           changeOrigin: true,
         },
         "/v1/auth": {
-          target: backendHost,
+          target: "http://localhost:8080",
           changeOrigin: true,
         },
       },
