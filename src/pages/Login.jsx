@@ -1,36 +1,37 @@
-import React, { useState, useEffect} from 'react'
-import { useNavigate } from 'react-router'
-import { useAuth } from '@/contexts/AuthContext'
-import { 
-  Card, 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { MainLayout } from '@/layouts/MainLayout'
-import { LoaderIcon } from 'lucide-react'
-
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { MainLayout } from "@/layouts/MainLayout";
+import { LoaderIcon } from "lucide-react";
+import { toast } from "sonner";
 export const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const navigate = useNavigate()
-  const { token, loading, signIn } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { token, loading, signIn } = useAuth();
 
   useEffect(() => {
     if (token) {
-      navigate("/", { replace: true })
+      navigate("/", { replace: true });
     }
-  }, [token, navigate])
+  }, [token, navigate]);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    signIn(email, password, () => navigate("/", { replace: true }))
-  }
+    e.preventDefault();
+    signIn(email, password);
+    toast.success("success login");
+  };
   return (
     <MainLayout>
       <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
@@ -42,7 +43,7 @@ export const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className='space-y-4'>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -65,7 +66,7 @@ export const Login = () => {
                       Olvidaste tu contrasena?
                     </a>
                   </div>
-                  <Input 
+                  <Input
                     id="password"
                     type="password"
                     placeholder="Ingresar contrasena"
@@ -88,12 +89,16 @@ export const Login = () => {
             </form>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button onClick={() => navigate("/register")} variant="outline" className="w-full">
+            <Button
+              onClick={() => navigate("/register")}
+              variant="outline"
+              className="w-full"
+            >
               Registrarse
             </Button>
           </CardFooter>
         </Card>
       </div>
     </MainLayout>
-  )
-}
+  );
+};
