@@ -23,7 +23,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (token) {
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   }, [token, navigate]);
 
