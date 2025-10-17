@@ -43,7 +43,8 @@ function request(path, { data = null, token = null, method = "GET" }) {
     })
 
     .then((json) => {
-      // carga success de la peticon en formato json
+      // carga success de la peticon en formato json - 
+      // solo para pruebas remover en produccion
       toast(JSON.stringify(json), { type: "success" });
       return json;
     });
@@ -62,3 +63,85 @@ export function register(userData) {
     method: "POST",
   });
 }
+
+//category CRUD
+export function addCategory(data, token){
+  return request("/v1/categorias", {
+    data,
+    token,
+    method: "POST",
+  })
+}
+export function getCategories(token){
+  return request("/v1/categorias", {
+    token,
+    method: "GET",
+  })
+}
+export function updateCategory(id, token){
+  return request(`/v1/categorias/${id}`, {
+    token,
+    method: "PUT",
+  })
+}
+export function removeCategory(id, token){
+  return reponse(`/v1/categorias/${id}`, {
+    token,
+    method: "DELETE"
+  })
+}
+
+// product CRUD
+export function addProduct(data, token){
+  return request("/v1/productos", {
+    data,
+    token,
+    method: "POST",
+  })
+}
+export function getProducts(token){
+  return request("/v1/productos", {
+    token,
+    method: "GET",
+  })
+}
+export function updateProduct(id, token){
+  return request(`/v1/productos/${id}`, {
+    token,
+    method: "PUT",
+  })
+}
+export function removeProduct(id, token){
+  return reponse(`/v1/productos/${id}`, {
+    token,
+    method: "DELETE"
+  })
+}
+
+//customers
+export function addCustomer(data, token){
+  return request("/v1/clientes", {
+    data,
+    token,
+    method: "POST",
+  })
+}
+export function getCustomers(token){
+  return request("/v1/clientes", {
+    token,
+    method: "GET",
+  })
+}
+export function updateCustomer(id, token){
+  return request(`/v1/clientes/${id}`, {
+    token,
+    method: "PUT",
+  })
+}
+export function removeCustomer(id, token){
+  return reponse(`/v1/clientes/${id}`, {
+    token,
+    method: "DELETE"
+  })
+}
+
