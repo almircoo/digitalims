@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "sonner"
 
 function request(path, { data = null, token = null, method = "GET" }) {
   return fetch(path, {
@@ -10,44 +10,33 @@ function request(path, { data = null, token = null, method = "GET" }) {
     body: method !== "GET" && method !== "DELETE" ? JSON.stringify(data) : null,
   })
     .then((response) => {
-      // si es correcto
       if (response.ok) {
         if (method === "DELETE") {
-          // si elemina no retorna nada
-          return true;
+          return true
         }
-        return response.json();
+        return response.json()
       }
 
-      // sobre escirbe si existen errores
       return response
         .json()
         .then((json) => {
-          // captura el error genrado del servidor
           if (response.status === 400) {
-            const errors = Object.keys(json).map((k) => `${json[k].join(" ")}`);
-            throw new Error(errors.join(" "));
+            const errors = Object.keys(json).map((k) => `${json[k].join(" ")}`)
+            throw new Error(errors.join(" "))
           }
-          throw new Error(JSON.stringify(json));
+          throw new Error(JSON.stringify(json))
         })
         .catch((e) => {
           if (e.name === "SyntaxError") {
-            throw new Error(response.statusText);
+            throw new Error(response.statusText)
           }
-          throw new Error(e);
-        });
+          throw new Error(e)
+        })
     })
     .catch((e) => {
-      // captura todos los errores
-      toast(e.message, { type: "error" });
+      toast(e.message, { type: "error" })
+      throw e
     })
-
-    .then((json) => {
-      // carga success de la peticon en formato json - 
-      // solo para pruebas remover en produccion
-      toast(JSON.stringify(json), { type: "success" });
-      return json;
-    });
 }
 
 export function login(email, password) {
@@ -64,6 +53,13 @@ export function register(userData) {
   })
 }
 
+export function getOrders(token, page = 0, size = 10) {
+  return request(`/v1/pedidos?page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+
 // Categories CRUD
 export function addCategory(data, token) {
   return request("/v1/categorias", {
@@ -73,8 +69,8 @@ export function addCategory(data, token) {
   })
 }
 
-export function getCategories(token) {
-  return request("/v1/categorias", {
+export function getCategories(token, page = 0, size = 10) {
+  return request(`/v1/categorias?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
@@ -104,8 +100,8 @@ export function addProduct(data, token) {
   })
 }
 
-export function getProducts(token) {
-  return request("/v1/productos", {
+export function getProducts(token, page = 0, size = 10) {
+  return request(`/v1/productos?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
@@ -135,8 +131,8 @@ export function addCustomer(data, token) {
   })
 }
 
-export function getCustomers(token) {
-  return request("/v1/clientes", {
+export function getCustomers(token, page = 0, size = 10) {
+  return request(`/v1/clientes?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
@@ -181,3 +177,9 @@ export function removeOrder(id, token) {
   })
 }
 
+export function updateOrderStatus(id, estado, token) {
+  return request(`/v1/pedidos/${id}/estado?estado=${estado}`, {
+    token,
+    method: "PATCH",
+  })
+}
