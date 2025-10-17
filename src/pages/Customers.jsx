@@ -1,0 +1,193 @@
+import React, { useState, useEffect } from 'react'
+
+import { useAuth } from "@/contexts/AuthContext"
+import { MainLayout } from "@/layouts/MainLayout"
+import { Sidebar } from "@/layouts/Sidebar"
+import { DataTable } from "@/components/DataTable"
+import { FormModal } from "@/components/FormModal"
+import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus } from "lucide-react"
+import { getCustomers, addCustomer, updateCustomer, removeCustomer } from "@/apis"
+import { toast } from "sonner"
+
+export const Customers = () => {
+  const { token } = useAuth()
+  const [customers, setCustomers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [formLoading, setFormLoading] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const [formData, setFormData] = useState({
+    nombre: "",
+    email: "",
+    telefono: "",
+    direccion: "",
+  })
+
+  useEffect(() => {
+    loadCustomers()
+  }, [])
+
+  const loadCustomers = async () => {
+    try {
+      setLoading(true)
+      const response = await getCustomers(token)
+      setCustomers(response.data || [])
+    } catch (error) {
+      toast.error("Error al cargar clientes")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOpenModal = (customer = null) => {
+    if (customer) {
+      setEditingCustomer(customer)
+      setFormData({
+        nombre: customer.nombre,
+        email: customer.email,
+        telefono: customer.telefono,
+        direccion: customer.direccion,
+      })
+    } else {
+      setEditingCustomer(null)
+      setFormData({
+        nombre: "",
+        email: "",
+        telefono: "",
+        direccion: "",
+      })
+    }
+    setModalOpen(true)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setFormLoading(true)
+    try {
+      if (editingCustomer) {
+        await updateCustomer(editingCustomer.id, formData, token)
+        toast.success("Cliente actualizado")
+      } else {
+        await addCustomer(formData, token)
+        toast.success("Cliente creado")
+      }
+      setModalOpen(false)
+      loadCustomers()
+    } catch (error) {
+      toast.error(error.message || "Error al guardar cliente")
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setFormLoading(true)
+    try {
+      await removeCustomer(deleteTarget.id, token)
+      toast.success("Cliente eliminado")
+      setDeleteOpen(false)
+      loadCustomers()
+    } catch (error) {
+      toast.error(error.message || "Error al eliminar cliente")
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const columns = [
+    { key: "nombre", label: "Nombre" },
+    { key: "email", label: "Email" },
+    { key: "telefono", label: "Teléfono" },
+    { key: "direccion", label: "Dirección" },
+  ]
+
+  return (
+    <MainLayout>
+      <Sidebar />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Clientes</h1>
+            <p className="text-muted-foreground mt-2">Gestiona la base de datos de clientes</p>
+          </div>
+          <Button onClick={() => handleOpenModal()}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nuevo Cliente
+          </Button>
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={customers}
+          loading={loading}
+          onEdit={handleOpenModal}
+          onDelete={(customer) => {
+            setDeleteTarget(customer)
+            setDeleteOpen(true)
+          }}
+        />
+
+        <FormModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          title={editingCustomer ? "Editar Cliente" : "Nuevo Cliente"}
+          onSubmit={handleSubmit}
+          loading={formLoading}
+        >
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="nombre">Nombre</Label>
+              <Input
+                id="nombre"
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                value={formData.telefono}
+                onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="direccion">Dirección</Label>
+              <Input
+                id="direccion"
+                value={formData.direccion}
+                onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+              />
+            </div>
+          </div>
+        </FormModal>
+
+        <DeleteConfirmDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          title="Eliminar Cliente"
+          description={`¿Estás seguro de que deseas eliminar "${deleteTarget?.nombre}"?`}
+          onConfirm={handleDelete}
+          loading={formLoading}
+        />
+      </div>
+    </MainLayout>
+  )
+}
