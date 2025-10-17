@@ -54,94 +54,130 @@ export function login(email, password) {
   return request("/v1/auth/login", {
     data: { email, password },
     method: "POST",
-  });
+  })
 }
 
 export function register(userData) {
   return request("/v1/auth/register", {
     data: userData,
     method: "POST",
-  });
+  })
 }
 
-//category CRUD
-export function addCategory(data, token){
+// Categories CRUD
+export function addCategory(data, token) {
   return request("/v1/categorias", {
     data,
     token,
     method: "POST",
   })
 }
-export function getCategories(token){
+
+export function getCategories(token) {
   return request("/v1/categorias", {
     token,
     method: "GET",
   })
 }
-export function updateCategory(id, token){
+
+export function updateCategory(id, data, token) {
+  return request(`/v1/categorias/${id}`, {
+    data,
+    token,
+    method: "PUT",
+  })
+}
+
+export function removeCategory(id, token) {
   return request(`/v1/categorias/${id}`, {
     token,
-    method: "PUT",
-  })
-}
-export function removeCategory(id, token){
-  return reponse(`/v1/categorias/${id}`, {
-    token,
-    method: "DELETE"
+    method: "DELETE",
   })
 }
 
-// product CRUD
-export function addProduct(data, token){
+// Products CRUD
+export function addProduct(data, token) {
   return request("/v1/productos", {
     data,
     token,
     method: "POST",
   })
 }
-export function getProducts(token){
+
+export function getProducts(token) {
   return request("/v1/productos", {
     token,
     method: "GET",
   })
 }
-export function updateProduct(id, token){
+
+export function updateProduct(id, data, token) {
+  return request(`/v1/productos/${id}`, {
+    data,
+    token,
+    method: "PUT",
+  })
+}
+
+export function removeProduct(id, token) {
   return request(`/v1/productos/${id}`, {
     token,
-    method: "PUT",
-  })
-}
-export function removeProduct(id, token){
-  return reponse(`/v1/productos/${id}`, {
-    token,
-    method: "DELETE"
+    method: "DELETE",
   })
 }
 
-//customers
-export function addCustomer(data, token){
+// Customers CRUD
+export function addCustomer(data, token) {
   return request("/v1/clientes", {
     data,
     token,
     method: "POST",
   })
 }
-export function getCustomers(token){
+
+export function getCustomers(token) {
   return request("/v1/clientes", {
     token,
     method: "GET",
   })
 }
-export function updateCustomer(id, token){
+
+export function updateCustomer(id, data, token) {
   return request(`/v1/clientes/${id}`, {
+    data,
     token,
     method: "PUT",
   })
 }
-export function removeCustomer(id, token){
-  return reponse(`/v1/clientes/${id}`, {
+
+export function removeCustomer(id, token) {
+  return request(`/v1/clientes/${id}`, {
     token,
-    method: "DELETE"
+    method: "DELETE",
+  })
+}
+
+// Orders CRUD
+export function createOrder(data, token) {
+  return request("/v1/pedidos", {
+    data,
+    token,
+    method: "POST",
+  })
+}
+
+export function updateOrder(id, data, token) {
+  return request(`/v1/pedidos/${id}`, {
+    data,
+    token,
+    method: "PUT",
+  })
+}
+
+export function removeOrder(id, token) {
+  return request(`/v1/pedidos/${id}`, {
+    token,
+    method: "DELETE",
   })
 }
 

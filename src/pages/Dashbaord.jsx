@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { MainLayout } from "@/layouts/MainLayout";
 import { Package, FolderTree, Users, TrendingUp } from "lucide-react";
 import { getCategories, getProducts, getCustomers } from "@/apis";
@@ -10,6 +11,7 @@ export const Dashbaord = () => {
     customers: 0,
     lowStock: 0,
   });
+  const { token } = useAuth()
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,9 +21,9 @@ export const Dashbaord = () => {
   const loadStats = async () => {
     try {
       const [productsRes, categoriesRes, customersRes] = await Promise.all([
-        getProducts(),
-        getCategories(),
-        getCustomers(),
+        getProducts(token),
+        getCategories(token),
+        getCustomers(token),
       ]);
 
       setStats({

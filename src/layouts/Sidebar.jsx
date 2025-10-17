@@ -34,7 +34,7 @@ export const Sidebar = () => {
     { name: "Pedidos", href: "/orders", icon: ShoppingCart },
   ];
 
-  // const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
   return (
     <Card className="flex h-full flex-col justify-between rounded-xl border p-4">
       <div>
@@ -53,12 +53,12 @@ export const Sidebar = () => {
               to={item.href}
               className={cn(
                 "flex items-center rounded-md px-3 py-2 text-sm font-medium",
-                location.pathname === item.href
+                isActive === item.href
                   ? "bg-primary"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              {item.title}
+              {item.name}
             </Link>
           ))}
         </nav>
