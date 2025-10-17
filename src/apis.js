@@ -40,14 +40,14 @@ function request(path, { data = null, token = null, method = "GET" }) {
     .catch((e) => {
       // captura todos los errores
       toast(e.message, { type: "error" });
-    })
-
-    .then((json) => {
-      // carga success de la peticon en formato json - 
-      // solo para pruebas remover en produccion
-      toast(JSON.stringify(json), { type: "success" });
-      return json;
     });
+
+  .then((json) => {
+  // carga success de la peticon en formato json -
+  // solo para pruebas remover en produccion
+    toast(JSON.stringify(json), { type: "success" });
+    return json;
+  });
 }
 
 export function login(email, password) {
@@ -65,83 +65,82 @@ export function register(userData) {
 }
 
 //category CRUD
-export function addCategory(data, token){
+export function addCategory(data, token) {
   return request("/v1/categorias", {
     data,
     token,
     method: "POST",
-  })
+  });
 }
-export function getCategories(token){
+export function getCategories(token) {
   return request("/v1/categorias", {
     token,
     method: "GET",
-  })
+  });
 }
-export function updateCategory(id, token){
+export function updateCategory(id, token) {
   return request(`/v1/categorias/${id}`, {
     token,
     method: "PUT",
-  })
+  });
 }
-export function removeCategory(id, token){
-  return reponse(`/v1/categorias/${id}`, {
+export function removeCategory(id, token) {
+  return request(`/v1/categorias/${id}`, {
     token,
-    method: "DELETE"
-  })
+    method: "DELETE",
+  });
 }
 
 // product CRUD
-export function addProduct(data, token){
+export function addProduct(data, token) {
   return request("/v1/productos", {
     data,
     token,
     method: "POST",
-  })
+  });
 }
-export function getProducts(token){
+export function getProducts(token) {
   return request("/v1/productos", {
     token,
     method: "GET",
-  })
+  });
 }
-export function updateProduct(id, token){
+export function updateProduct(id, token) {
   return request(`/v1/productos/${id}`, {
     token,
     method: "PUT",
-  })
+  });
 }
-export function removeProduct(id, token){
-  return reponse(`/v1/productos/${id}`, {
+export function removeProduct(id, token) {
+  return request(`/v1/productos/${id}`, {
     token,
-    method: "DELETE"
-  })
+    method: "DELETE",
+  });
 }
 
 //customers
-export function addCustomer(data, token){
+export function addCustomer(data, token) {
   return request("/v1/clientes", {
     data,
     token,
     method: "POST",
-  })
+  });
 }
-export function getCustomers(token){
+export function getCustomers(token) {
   return request("/v1/clientes", {
     token,
     method: "GET",
-  })
+  });
 }
-export function updateCustomer(id, token){
+export function updateCustomer(id, token) {
   return request(`/v1/clientes/${id}`, {
     token,
     method: "PUT",
-  })
+  });
 }
-export function removeCustomer(id, token){
-  return reponse(`/v1/clientes/${id}`, {
+export function removeCustomer(id, token) {
+  return request(`/v1/clientes/${id}`, {
     token,
-    method: "DELETE"
-  })
+    method: "DELETE",
+  });
 }
-

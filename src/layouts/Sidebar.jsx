@@ -58,7 +58,7 @@ export const Sidebar = () => {
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              {item.title}
+              {item.name}
             </Link>
           ))}
         </nav>
