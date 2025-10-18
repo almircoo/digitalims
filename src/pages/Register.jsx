@@ -45,7 +45,6 @@ export const Register = () => {
       toast.success(
         "Registro exitoso. Revisa tu email para verificar tu cuenta.",
       );
-      console.log("regsiter data: ", result);
       navigate("/login");
     } else {
       toast.error(result.error);
@@ -60,10 +59,10 @@ export const Register = () => {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
-              Register
+              Registro
             </CardTitle>
             <CardDescription className="text-center">
-              Create a new account to get started
+              Crea una nueva cuenta para acceder al sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -98,9 +97,10 @@ export const Register = () => {
                   id="dni"
                   type="text"
                   name="dni"
-                  placeholder="Ingrese D.N.I"
+                  placeholder="Ingrese D.N.I (8 dígitos)"
                   value={formData.dni}
                   onChange={handleChange}
+                  maxLength="8"
                   required
                 />
               </div>
@@ -118,23 +118,41 @@ export const Register = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Contrasena</Label>
+                <Label htmlFor="password">Contraseña</Label>
                 <Input
                   id="password"
                   type="password"
                   name="password"
-                  placeholder="Ingrese contrasena"
+                  placeholder="Ingrese contraseña (mínimo 6 caracteres)"
                   value={formData.password}
                   onChange={handleChange}
+                  minLength="6"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">Tipo de Cuenta</Label>
+                <select
+                  id="role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                >
+                  <option value="USER">Usuario Regular</option>
+                  <option value="ADMIN">Administrador</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Selecciona el tipo de cuenta que deseas crear
+                </p>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <LoaderIcon className="mr-2 h-4 w-4" />
-                    Creando ...
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Creando...
                   </>
                 ) : (
                   "Crear Cuenta"
@@ -142,13 +160,13 @@ export const Register = () => {
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
-                Y atienes una cuenta?{" "}
+                ¿Ya tienes una cuenta?{" "}
                 <button
                   type="button"
                   onClick={() => navigate("/login")}
                   className="text-primary hover:underline font-medium"
                 >
-                  Iniciar Session
+                  Iniciar Sesión
                 </button>
               </p>
             </form>
