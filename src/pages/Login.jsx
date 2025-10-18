@@ -1,36 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router"
-import { useAuth } from "@/contexts/AuthContext"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { MainLayout } from "@/layouts/MainLayout"
-import { LoaderIcon } from "lucide-react"
-import { toast } from "sonner"
+import { useNavigate } from "react-router";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { MainLayout } from "@/layouts/MainLayout";
+import { LoaderIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const navigate = useNavigate()
-  const { token, loading, signIn } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, signIn } = useAuth();
 
   useEffect(() => {
-    if (token) {
-      navigate("/dashboard", { replace: true })
+    if (isAuthenticated && !loading) {
+      navigate("/dashboard", { replace: true });
     }
-  }, [token, navigate])
+  }, [isAuthenticated, loading, navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const result = await signIn(email, password)
+    e.preventDefault();
+    const result = await signIn(email, password);
     if (result?.success) {
-      toast.success("Sesión iniciada correctamente")
-      navigate("/dashboard", { replace: true })
+      toast.success("Sesión iniciada correctamente");
+      navigate("/dashboard", { replace: true });
     } else {
-      toast.error(result?.error || "Error al iniciar sesión")
+      toast.error(result?.error || "Error al iniciar sesión");
     }
-  }
+  };
 
   return (
     <MainLayout>
@@ -38,7 +45,9 @@ export const Login = () => {
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle>Iniciar Sesión</CardTitle>
-            <CardDescription>Ingresa tus credenciales para acceder al sistema</CardDescription>
+            <CardDescription>
+              Ingresa tus credenciales para acceder al sistema
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,7 +66,10 @@ export const Login = () => {
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Contraseña</Label>
-                    <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
+                    <a
+                      href="#"
+                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    >
                       ¿Olvidaste tu contraseña?
                     </a>
                   </div>
@@ -84,12 +96,16 @@ export const Login = () => {
             </form>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button onClick={() => navigate("/register")} variant="outline" className="w-full">
+            <Button
+              onClick={() => navigate("/register")}
+              variant="outline"
+              className="w-full"
+            >
               Crear Nueva Cuenta
             </Button>
           </CardFooter>
         </Card>
       </div>
     </MainLayout>
-  )
-}
+  );
+};
