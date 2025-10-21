@@ -25,7 +25,7 @@ export const normalizeCategory = (category) => {
 
 export const normalizeCustomer = (customer) => {
   return {
-    id: customer.id,
+    id: customer.id || customer.idCustomer,
     nombre: customer.nombre,
     apellido: customer.apellido,
     email: customer.email,
