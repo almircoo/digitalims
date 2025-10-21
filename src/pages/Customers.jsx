@@ -46,12 +46,9 @@ export const Customers = () => {
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      if (user?.role === "ADMIN") {
-        const response = await getCustomers(token);
-        setCustomers(normalizeArray(response.datos || [], normalizeCustomer));
-      } else {
-        setCustomers([]);
-      }
+      // Backend allows GET for ADMIN/USER
+      const response = await getCustomers(token);
+      setCustomers(normalizeArray(response.datos || [], normalizeCustomer));
     } catch (error) {
       console.error(" Error loading customers:", error);
       toast.error("Error al cargar clientes");
@@ -158,7 +155,7 @@ export const Customers = () => {
 
               {user?.role === "USER" && (
                 <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-700">
-                  Como usuario, puedes crear y editar clientes, pero solo
+                  Como usuario, puedes crear, editar y eliminar clientes. Solo
                   administradores pueden ver la lista completa.
                 </div>
               )}
@@ -167,8 +164,22 @@ export const Customers = () => {
                 columns={columns}
                 data={customers}
                 loading={loading}
-                onEdit={handleOpenModal}
+                onEdit={(customer) => {
+                  if (
+                    !PERMISSIONS.ACTIONS.UPDATE_CUSTOMER.includes(user?.role)
+                  ) {
+                    toast.error("No tienes permiso para editar clientes");
+                    return;
+                  }
+                  handleOpenModal(customer);
+                }}
                 onDelete={(customer) => {
+                  if (
+                    !PERMISSIONS.ACTIONS.DELETE_CUSTOMER.includes(user?.role)
+                  ) {
+                    toast.error("No tienes permiso para eliminar clientes");
+                    return;
+                  }
                   setDeleteTarget(customer);
                   setDeleteOpen(true);
                 }}
