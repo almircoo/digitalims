@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { DialogFooter } from "./ui/dialog";
 import {
   Select,
   SelectContent,
@@ -31,11 +32,13 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
     }
 
     const product = products.find(
-      (p) => p.id === Number.parseInt(selectedProduct),
+      (p) => p.idProducto === Number.parseInt(selectedProduct),
     );
     if (!product) return;
 
-    const existingItem = cartItems.findIndex((item) => item.id === product.id);
+    const existingItem = cartItems.findIndex(
+      (item) => item.id === product.idProducto,
+    );
 
     if (existingItem >= 0) {
       const updatedItems = [...cartItems];
@@ -45,7 +48,7 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
       setCartItems([
         ...cartItems,
         {
-          id: product.id,
+          id: product.idProducto,
           nombre: product.nombre,
           precioUnitario: product.precio,
           cantidad: selectedQuantity,
@@ -112,7 +115,7 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
   };
 
   const handleClientChange = (value) => {
-    console.log(" Client selected:", value);
+    console.log("Client selected:", value);
     setFormData({ ...formData, clienteId: value });
   };
 
@@ -132,8 +135,8 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
               {customers && customers.length > 0 ? (
                 customers.map((customer) => (
                   <SelectItem
-                    key={`customer-${customer.id}`}
-                    value={String(customer.id)}
+                    key={`customer-${customer.idCustomer}`}
+                    value={String(customer.idCustomer)}
                   >
                     {customer.nombre} - {customer.email}
                   </SelectItem>
@@ -200,8 +203,8 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PENDIENTE">Pendiente</SelectItem>
-                <SelectItem value="CONFIRMADO">Confirmado</SelectItem>
-                <SelectItem value="ENVIADO">Enviado</SelectItem>
+                {/* <SelectItem value="CONFIRMADO">Confirmado</SelectItem>
+                <SelectItem value="ENVIADO">Enviado</SelectItem>*/}
                 <SelectItem value="ENTREGADO">Entregado</SelectItem>
                 <SelectItem value="CANCELADO">Cancelado</SelectItem>
               </SelectContent>
@@ -225,8 +228,8 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
                 {products && products.length > 0 ? (
                   products.map((product) => (
                     <SelectItem
-                      key={`product-${product.id}`}
-                      value={String(product.id)}
+                      key={`product-${product.idProducto}`}
+                      value={String(product.idProducto)}
                     >
                       {product.nombre} - ${product.precio.toFixed(2)}
                     </SelectItem>
@@ -275,12 +278,18 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
         />
       </div>
 
-      {/* Botones de Acción */}
-      <div className="flex gap-4 justify-end">
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => window.location.reload()}
+        >
+          Cancelar
+        </Button>
         <Button type="submit" disabled={loading || cartItems.length === 0}>
           {loading ? "Creando pedido..." : "Crear Pedido"}
         </Button>
-      </div>
+      </DialogFooter>
     </form>
   );
 };

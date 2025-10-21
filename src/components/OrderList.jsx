@@ -9,6 +9,7 @@ import {
 } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Edit2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { PERMISSIONS } from "@/config/permissions";
 
 export const OrderList = ({
   orders,
@@ -16,8 +17,13 @@ export const OrderList = ({
   onDelete,
   onStatusChange,
   loading,
+  userRole = "USER",
 }) => {
   const [expandedOrder, setExpandedOrder] = useState(null);
+
+  const canChangeStatus =
+    PERMISSIONS.ACTIONS.UPDATE_ORDER_STATUS.includes(userRole);
+  const canDeleteOrder = PERMISSIONS.ACTIONS.DELETE_ORDER.includes(userRole);
 
   const getStatusColor = (status) => {
     const colors = {
@@ -69,14 +75,17 @@ export const OrderList = ({
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onDelete(order.id)}
-                  disabled={loading}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                {canDeleteOrder && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDelete(order.id)}
+                    disabled={loading}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -136,45 +145,56 @@ export const OrderList = ({
                 </div>
               </div>
 
-              {order.estado !== "ENTREGADO" && order.estado !== "CANCELADO" && (
-                <div className="flex gap-2">
-                  {order.estado === "PENDIENTE" && (
+              {canChangeStatus &&
+                order.estado !== "ENTREGADO" &&
+                order.estado !== "CANCELADO" && (
+                  <div className="flex gap-2">
+                    {order.estado === "PENDIENTE" && (
+                      <Button
+                        size="sm"
+                        onClick={() => onStatusChange(order.id, "CONFIRMADO")}
+                        disabled={loading}
+                      >
+                        Confirmar
+                      </Button>
+                    )}
+                    {order.estado === "CONFIRMADO" && (
+                      <Button
+                        size="sm"
+                        onClick={() => onStatusChange(order.id, "ENVIADO")}
+                        disabled={loading}
+                      >
+                        Marcar como Enviado
+                      </Button>
+                    )}
+                    {order.estado === "ENVIADO" && (
+                      <Button
+                        size="sm"
+                        onClick={() => onStatusChange(order.id, "ENTREGADO")}
+                        disabled={loading}
+                      >
+                        Marcar como Entregado
+                      </Button>
+                    )}
                     <Button
                       size="sm"
-                      onClick={() => onStatusChange(order.id, "CONFIRMADO")}
+                      variant="destructive"
+                      onClick={() => onStatusChange(order.id, "CANCELADO")}
                       disabled={loading}
                     >
-                      Confirmar
+                      Cancelar
                     </Button>
-                  )}
-                  {order.estado === "CONFIRMADO" && (
-                    <Button
-                      size="sm"
-                      onClick={() => onStatusChange(order.id, "ENVIADO")}
-                      disabled={loading}
-                    >
-                      Marcar como Enviado
-                    </Button>
-                  )}
-                  {order.estado === "ENVIADO" && (
-                    <Button
-                      size="sm"
-                      onClick={() => onStatusChange(order.id, "ENTREGADO")}
-                      disabled={loading}
-                    >
-                      Marcar como Entregado
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => onStatusChange(order.id, "CANCELADO")}
-                    disabled={loading}
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              )}
+                  </div>
+                )}
+              {!canChangeStatus &&
+                (order.estado === "PENDIENTE" ||
+                  order.estado === "CONFIRMADO" ||
+                  order.estado === "ENVIADO") && (
+                  <div className="rounded-md bg-amber-50 p-2 text-xs text-amber-700">
+                    Solo administradores pueden cambiar el estado de los
+                    pedidos.
+                  </div>
+                )}
             </CardContent>
           )}
         </Card>

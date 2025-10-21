@@ -5,7 +5,7 @@ import { Sidebar } from "@/layouts/Sidebar";
 import { FormModal } from "@/components/FormModal";
 import { OrderForm } from "@/components/OrderForm";
 import { OrderList } from "@/components/OrderList";
-import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
+// import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { PERMISSIONS } from "@/config/permissions";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,10 @@ export const Orders = () => {
         getCustomers(token),
         getProducts(token),
       ]);
-      setCustomers(customersRes.data || []);
-      setProducts(productsRes.data || []);
+      console.log("Customer order data: ", customersRes);
+      console.log("productos order data: ", productsRes);
+      setCustomers(customersRes.datos || []);
+      setProducts(productsRes.datos || []);
 
       const storedOrders = localStorage.getItem("orders");
       if (storedOrders) {
@@ -81,6 +83,11 @@ export const Orders = () => {
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
+    if (!PERMISSIONS.ACTIONS.UPDATE_ORDER_STATUS.includes(user?.role)) {
+      toast.error("No tienes permiso para cambiar el estado de pedidos");
+      return;
+    }
+
     try {
       console.log(" Updating order status:", orderId, newStatus);
       await updateOrderStatus(orderId, newStatus, token);
@@ -99,6 +106,11 @@ export const Orders = () => {
   };
 
   const handleDelete = async (orderId) => {
+    if (!PERMISSIONS.ACTIONS.DELETE_ORDER.includes(user?.role)) {
+      toast.error("No tienes permiso para eliminar pedidos");
+      return;
+    }
+
     if (!confirm("¿Estás seguro de que deseas eliminar este pedido?")) return;
 
     try {
@@ -150,6 +162,12 @@ export const Orders = () => {
                   Crea pedidos agregando múltiples productos al carrito. El
                   sistema calculará automáticamente el total.
                 </p>
+                {user?.role === "USER" && (
+                  <p className="mt-2 text-xs">
+                    Como usuario, puedes crear y eliminar tus pedidos, pero solo
+                    administradores pueden cambiar estados.
+                  </p>
+                )}
               </div>
 
               <FormModal
@@ -157,10 +175,7 @@ export const Orders = () => {
                 onOpenChange={setModalOpen}
                 title="Crear Nuevo Pedido"
                 description="Completa el formulario para crear un nuevo pedido con múltiples productos"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
-                loading={false}
+                showFooter={false}
               >
                 {!loading ? (
                   <OrderForm
@@ -182,6 +197,7 @@ export const Orders = () => {
                   onDelete={handleDelete}
                   onStatusChange={handleStatusChange}
                   loading={formLoading}
+                  userRole={user?.role}
                 />
               </div>
             </div>
