@@ -22,7 +22,7 @@ import { PERMISSIONS } from "@/config/permissions";
 import { toast } from "sonner";
 
 export const Categories = () => {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,7 +37,7 @@ export const Categories = () => {
 
   useEffect(() => {
     loadCategories();
-  }, [token]); //
+  }, [token]);
 
   const loadCategories = async () => {
     try {
@@ -60,10 +60,13 @@ export const Categories = () => {
   const handleOpenModal = (category = null) => {
     if (category) {
       setEditingCategory(category);
-      setFormData({ nombre: category.nombre });
+      setFormData({
+        nombre: category.nombre,
+        descripcion: category.descripcion || "",
+      });
     } else {
       setEditingCategory(null);
-      setFormData({ nombre: "" });
+      setFormData({ nombre: "", descripcion: "" });
     }
     setModalOpen(true);
   };
@@ -153,30 +156,31 @@ export const Categories = () => {
                   onSubmit={handleSubmit}
                   loading={formLoading}
                 >
-                  <div>
-                    <Label htmlFor="nombre">Nombre</Label>
-                    <Input
-                      id="nombre"
-                      value={formData.nombre}
-                      onChange={(e) =>
-                        setFormData({ ...formData, nombre: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="descripcion">Descripcion</Label>
-                    <Textarea
-                      id="descripcion"
-                      value={formData.descripcion}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          descripcion: e.target.value,
-                        })
-                      }
-                      required
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="nombre">Nombre *</Label>
+                      <Input
+                        id="nombre"
+                        value={formData.nombre}
+                        onChange={(e) =>
+                          setFormData({ ...formData, nombre: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="descripcion">Descripción</Label>
+                      <Textarea
+                        id="descripcion"
+                        value={formData.descripcion}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            descripcion: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
                 </FormModal>
 
