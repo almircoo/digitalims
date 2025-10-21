@@ -11,6 +11,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { LoaderIcon } from "lucide-react";
 import { MainLayout } from "@/layouts/MainLayout";
 import { toast } from "sonner";
@@ -130,22 +137,25 @@ export const Register = () => {
                   required
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="role">Tipo de Cuenta</Label>
-                <select
-                  id="role"
-                  name="role"
+                <Select
                   value={formData.role}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, role: value })
+                  }
                 >
-                  <option value="USER">Usuario Regular</option>
-                  <option value="ADMIN">Administrador</option>
-                </select>
-                <p className="text-xs text-muted-foreground">
+                  <SelectTrigger className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground">
+                    <SelectValue placeholder="Selecciona el tipo de cuenta" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="USER">Usuario Regular</SelectItem>
+                    <SelectItem value="ADMIN">Administrador</SelectItem>
+                  </SelectContent>
+                </Select>
+                {/* <p className="text-xs text-muted-foreground">
                   Selecciona el tipo de cuenta que deseas crear
-                </p>
+                </p>*/}
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
