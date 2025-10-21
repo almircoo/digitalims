@@ -206,3 +206,124 @@ export function updateOrderStatus(id, estado, token) {
     method: "PATCH",
   });
 }
+// Reports
+export function getDashboardReport(startDate, endDate, token) {
+  return request(
+    `/v1/reportes/dashboard?fechaInicio=${startDate}&fechaFin=${endDate}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getSalesByProductReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/ventas/producto?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getSalesByCategoryReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/ventas/categoria?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getSalesByCustomerReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/ventas/cliente?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getTopProductsReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getLowStockProductsReport(
+  stockMinimo = 10,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/productos/stock-bajo?stockMinimo=${stockMinimo}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getFrequentCustomersReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/clientes/frecuentes?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
+
+export function getTopCustomersReport(
+  startDate,
+  endDate,
+  page = 0,
+  size = 10,
+  token,
+) {
+  return request(
+    `/v1/reportes/clientes/top?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    {
+      token,
+      method: "GET",
+    },
+  );
+}
