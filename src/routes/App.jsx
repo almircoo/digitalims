@@ -11,6 +11,7 @@ import { Categories } from "@/pages/Categories";
 import { Products } from "@/pages/Products";
 import { Customers } from "@/pages/Customers";
 import { Orders } from "@/pages/Orders";
+import { Reports } from "@/pages/Reports";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
             <Route
               path="/products"
               element={
-                <ProtectedRoute requiredRole="ADMIN">
+                <ProtectedRoute requiredRole={["ADMIN", "USER"]}>
                   <Products />
                 </ProtectedRoute>
               }
@@ -60,6 +61,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole={["ADMIN", "USER"]}>
                   <Orders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <Reports />
                 </ProtectedRoute>
               }
             />
