@@ -10,7 +10,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2, Edit2 } from "lucide-react";
 
-export const DataTable = ({ columns, data, onEdit, onDelete, loading }) => {
+export const DataTable = ({
+  columns,
+  data,
+  onEdit,
+  onDelete,
+  loading,
+  editDisabled = false,
+  deleteDisabled = false,
+}) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -58,6 +66,12 @@ export const DataTable = ({ columns, data, onEdit, onDelete, loading }) => {
                         size="sm"
                         variant="outline"
                         onClick={() => onEdit(row)}
+                        disabled={editDisabled}
+                        title={
+                          editDisabled
+                            ? "No tienes permiso para editar"
+                            : "Editar"
+                        }
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -67,6 +81,12 @@ export const DataTable = ({ columns, data, onEdit, onDelete, loading }) => {
                         size="sm"
                         variant="destructive"
                         onClick={() => onDelete(row)}
+                        disabled={deleteDisabled}
+                        title={
+                          deleteDisabled
+                            ? "No tienes permiso para eliminar"
+                            : "Eliminar"
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
