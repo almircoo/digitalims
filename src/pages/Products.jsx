@@ -88,50 +88,17 @@ export const Products = () => {
             normalizeCategory,
           ),
         );
-        //setCategories(normalizeArray(categoriesRes.datos || [], (c) => c));
       } else {
         // Error solo en la carga de categorías
         console.error("Error al cargar categorías:", categoriesResult.reason);
         toast.error("Advertencia: No se pudieron cargar las categorías.");
       }
     } catch (error) {
-      // Este catch solo se activaría por un error DENTRO del Promise.allSettled
       console.error("Error general:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  // const loadData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const [productsRes, categoriesRes] = await Promise.all([
-  //       getProducts(token),
-  //       getCategories(token),
-  //     ]);
-  //     console.log("Products loaded: ", productsRes);
-  //     console.log("Category loaded: ", categoriesRes);
-  //     const normalizedProducts = normalizeArray(
-  //       productsRes.data || [],
-  //       normalizeProduct,
-  //     );
-  //     const normalizedCategories = normalizeArray(
-  //       categoriesRes.data || [],
-  //       (c) => c,
-  //     );
-
-  //     setProducts(normalizedProducts);
-  //     setCategories(normalizedCategories);
-
-  //     console.log("Normalized products:", normalizedProducts);
-  //     console.log("Normalized categories:", normalizedCategories);
-  //   } catch (error) {
-  //     console.error("Error loading products:", error);
-  //     toast.error("Error al cargar productos");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleOpenModal = (product = null) => {
     if (product) {
@@ -175,7 +142,7 @@ export const Products = () => {
         descripcion: formData.descripcion,
         precio: Number.parseFloat(formData.precio),
         stock: Number.parseInt(formData.stock),
-        categoriaId: Number.parseInt(formData.categoriaId), //
+        categoriaId: Number.parseInt(formData.categoriaId),
         modelo: formData.modelo,
         marca: formData.marca,
         color: formData.color,
@@ -242,7 +209,7 @@ export const Products = () => {
 
               {user?.role === "USER" && (
                 <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-700">
-                  Puedes ver productos, pero solo administradores pueden crear,
+                  Puedes ver productos. Solo administradores pueden crear,
                   editar o eliminar.
                 </div>
               )}
@@ -251,8 +218,22 @@ export const Products = () => {
                 columns={columns}
                 data={products}
                 loading={loading}
-                onEdit={handleOpenModal}
+                onEdit={(product) => {
+                  if (
+                    !PERMISSIONS.ACTIONS.UPDATE_PRODUCT.includes(user?.role)
+                  ) {
+                    toast.error("No tienes permiso para editar productos");
+                    return;
+                  }
+                  handleOpenModal(product);
+                }}
                 onDelete={(product) => {
+                  if (
+                    !PERMISSIONS.ACTIONS.DELETE_PRODUCT.includes(user?.role)
+                  ) {
+                    toast.error("No tienes permiso para eliminar productos");
+                    return;
+                  }
                   setDeleteTarget(product);
                   setDeleteOpen(true);
                 }}
