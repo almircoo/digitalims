@@ -21,13 +21,16 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
     estado: "PENDIENTE",
   });
 
-  const [cartItems, setCartItems] = useState([]);
+  const [detalles, setDetalles] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [validationError, setValidationError] = useState("");
 
   const handleAddToCart = () => {
+    setValidationError("");
+
     if (!selectedProduct) {
-      alert("Selecciona un producto");
+      setValidationError("Selecciona un producto");
       return;
     }
 
@@ -36,17 +39,22 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
     );
     if (!product) return;
 
-    const existingItem = cartItems.findIndex(
+    if (selectedQuantity < 1) {
+      setValidationError("La cantidad debe ser mayor a 0");
+      return;
+    }
+
+    const existingItem = detalles.findIndex(
       (item) => item.id === product.idProducto,
     );
 
     if (existingItem >= 0) {
-      const updatedItems = [...cartItems];
+      const updatedItems = [...detalles];
       updatedItems[existingItem].cantidad += selectedQuantity;
-      setCartItems(updatedItems);
+      setDetalles(updatedItems);
     } else {
-      setCartItems([
-        ...cartItems,
+      setDetalles([
+        ...detalles,
         {
           id: product.idProducto,
           nombre: product.nombre,
@@ -62,38 +70,55 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
   };
 
   const handleUpdateQuantity = (index, newQuantity) => {
-    const updatedItems = [...cartItems];
+    if (newQuantity < 1) {
+      setValidationError("La cantidad debe ser mayor a 0");
+      return;
+    }
+
+    const updatedItems = [...detalles];
     updatedItems[index].cantidad = newQuantity;
-    setCartItems(updatedItems);
+    setDetalles(updatedItems);
+    setValidationError("");
   };
 
   const handleRemoveItem = (index) => {
-    setCartItems(cartItems.filter((_, i) => i !== index));
+    setDetalles(detalles.filter((_, i) => i !== index));
   };
 
   const handleClearCart = () => {
-    setCartItems([]);
+    setDetalles([]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setValidationError("");
 
     if (!formData.clienteId) {
-      alert("Selecciona un cliente");
+      setValidationError("Selecciona un cliente");
       return;
     }
 
-    if (cartItems.length === 0) {
-      alert("Agrega al menos un producto al carrito");
+    if (!detalles || detalles.length === 0) {
+      setValidationError(
+        "Debes agregar al menos un producto al carrito. Los detalles del pedido son requeridos.",
+      );
       return;
     }
 
     if (!formData.direccionEnvio) {
-      alert("Ingresa la dirección de envío");
+      setValidationError("Ingresa la dirección de envío");
       return;
     }
 
-    const total = cartItems.reduce(
+    const invalidDetail = detalles.find(
+      (item) => !item.id || item.cantidad < 1 || item.precioUnitario <= 0,
+    );
+    if (invalidDetail) {
+      setValidationError("Uno o más productos tienen datos inválidos");
+      return;
+    }
+
+    const total = detalles.reduce(
       (sum, item) => sum + item.precioUnitario * item.cantidad,
       0,
     );
@@ -104,12 +129,29 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
       direccionEnvio: formData.direccionEnvio,
       metodoPago: formData.metodoPago,
       estado: formData.estado,
-      detalles: cartItems.map((item) => ({
-        producto: item.producto,
+      detalles: detalles.map((item) => ({
+        producto: {
+          productoId: item.producto.idProducto,
+          categoria: {
+            idCategoria: item.producto.categoria?.idCategoria || 1,
+          },
+          nombre: item.producto.nombre,
+          descripcion: item.producto.descripcion || "",
+          precio: item.producto.precio,
+          stock: item.producto.stock,
+          modelo: item.producto.modelo || "",
+          marca: item.producto.marca || "",
+          color: item.producto.color || "",
+          fechaCreacion:
+            item.producto.fechaCreacion || new Date().toISOString(),
+          estado:
+            item.producto.estado !== undefined ? item.producto.estado : true,
+        },
         cantidad: item.cantidad,
         precioUnitario: Number.parseFloat(item.precioUnitario.toFixed(2)),
       })),
     };
+    console.log("ORDER DATA: ", orderData);
 
     onSubmit(orderData);
   };
@@ -121,6 +163,12 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {validationError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          {validationError}
+        </div>
+      )}
+
       {/* Información del Pedido */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Información del Pedido</h3>
@@ -203,8 +251,6 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PENDIENTE">Pendiente</SelectItem>
-                {/* <SelectItem value="CONFIRMADO">Confirmado</SelectItem>
-                <SelectItem value="ENVIADO">Enviado</SelectItem>*/}
                 <SelectItem value="ENTREGADO">Entregado</SelectItem>
                 <SelectItem value="CANCELADO">Cancelado</SelectItem>
               </SelectContent>
@@ -269,9 +315,12 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
 
       {/* Carrito */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Carrito de Compras</h3>
+        <h3 className="text-lg font-semibold">
+          Carrito de Compras{" "}
+          {detalles.length > 0 && `(${detalles.length} productos)`}
+        </h3>
         <OrderCart
-          items={cartItems}
+          items={detalles}
           onUpdateQuantity={handleUpdateQuantity}
           onRemoveItem={handleRemoveItem}
           onClearCart={handleClearCart}
@@ -286,7 +335,7 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
         >
           Cancelar
         </Button>
-        <Button type="submit" disabled={loading || cartItems.length === 0}>
+        <Button type="submit" disabled={loading || detalles.length === 0}>
           {loading ? "Creando pedido..." : "Crear Pedido"}
         </Button>
       </DialogFooter>
