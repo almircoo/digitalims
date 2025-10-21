@@ -8,6 +8,7 @@ import {
   Users,
   ShoppingCart,
   LogOut,
+  BarChart3,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,12 @@ export const Sidebar = () => {
       href: "/orders",
       icon: ShoppingCart,
       roles: PERMISSIONS.PAGES.ORDERS,
+    },
+    {
+      name: "Reportes",
+      href: "/reports",
+      icon: BarChart3,
+      roles: ["ADMIN"],
     },
   ];
 
