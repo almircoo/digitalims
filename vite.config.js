@@ -12,11 +12,11 @@ export default defineConfig( {
   server: {
     proxy: {
       "/v1": {
-        target: "https://pedidos-cibertec.up.railway.app", // http://localhost:8080/
+        target: "https://ms-inventario.onrender.com", // http://localhost:8080/
         changeOrigin: true,
       },
       "/v1/auth": {
-        target: "https://pedidos-cibertec.up.railway.app", // http://localhost:8080/
+        target: "https://ms-inventario.onrender.com", // http://localhost:8080/
         changeOrigin: true,
       },
     },
