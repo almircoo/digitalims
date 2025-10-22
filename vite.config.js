@@ -10,7 +10,7 @@ export default defineConfig( {
     },
   },
   server: {
-    port: 3000,
+    // port: 3000,
     proxy: {
       "/v1": {
         target: "https://pedidos-cibertec.up.railway.app",
