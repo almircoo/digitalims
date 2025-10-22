@@ -1,7 +1,7 @@
 //Normaliza respuestas del backend para que coincidan con la estructura esperada del frontend
 export const normalizeProduct = (product) => {
   return {
-    id: product.idProducto || product.id,
+    id: product.idProducto,
     nombre: product.nombre,
     descripcion: product.descripcion,
     precio: product.precio,
