@@ -10,14 +10,13 @@ export default defineConfig( {
     },
   },
   server: {
-    // port: 3000,
     proxy: {
       "/v1": {
-        target: "https://pedidos-cibertec.up.railway.app",
+        target: "https://pedidos-cibertec.up.railway.app", // http://localhost:8080/
         changeOrigin: true,
       },
       "/v1/auth": {
-        target: "https://pedidos-cibertec.up.railway.app",
+        target: "https://pedidos-cibertec.up.railway.app", // http://localhost:8080/
         changeOrigin: true,
       },
     },
