@@ -35,15 +35,15 @@ import {
 import { toast } from "sonner";
 
 export const Products = () => {
-  const { token, user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const { token, user } = useAuth()
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [formLoading, setFormLoading] = useState(false)
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
@@ -53,56 +53,44 @@ export const Products = () => {
     modelo: "",
     marca: "",
     color: "",
-  });
+  })
 
   useEffect(() => {
-    loadData();
-  }, [token]);
+    loadData()
+  }, [token])
 
   const loadData = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const [productsResult, categoriesResult] = await Promise.allSettled([
-        getProducts(token),
-        getCategories(token),
-      ]);
+      const [productsResult, categoriesResult] = await Promise.allSettled([getProducts(token), getCategories(token)])
 
-      // Manejar Productos
       if (productsResult.status === "fulfilled") {
-        const productsRes = productsResult.value;
-        console.log("Datos de producto: ", productsRes);
-        setProducts(normalizeArray(productsRes.datos || [], normalizeProduct));
+        const productsRes = productsResult.value
+        console.log("Datos de producto: ", productsRes)
+        setProducts(normalizeArray(productsRes.datos || productsRes.data || [], normalizeProduct))
       } else {
-        // Error solo en la carga de productos
-        console.error("Error al cargar productos:", productsResult.reason);
-        toast.warning("Advertencia: No se pudieron cargar los productos.");
+        console.error("Error al cargar productos:", productsResult.reason)
+        // toast.warning("Advertencia: No se pudieron cargar los productos.")
       }
 
-      // Manejar Categorías
       if (categoriesResult.status === "fulfilled") {
-        const categoriesRes = categoriesResult.value;
-        console.log("Datos de categoria: ", categoriesRes);
-        setCategories(
-          normalizeArray(
-            categoriesRes.datos || categoriesRes.data || [],
-            normalizeCategory,
-          ),
-        );
+        const categoriesRes = categoriesResult.value
+        console.log("Datos de categoria: ", categoriesRes)
+        setCategories(normalizeArray(categoriesRes.datos || categoriesRes.data || [], normalizeCategory))
       } else {
-        // Error solo en la carga de categorías
-        console.error("Error al cargar categorías:", categoriesResult.reason);
-        toast.error("Advertencia: No se pudieron cargar las categorías.");
+        console.error("Error al cargar categorías:", categoriesResult.reason)
+        // toast.error("Advertencia: No se pudieron cargar las categorías.")
       }
     } catch (error) {
-      console.error("Error general:", error);
+      console.error("Error general:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleOpenModal = (product = null) => {
     if (product) {
-      setEditingProduct(product);
+      setEditingProduct(product)
       setFormData({
         nombre: product.nombre,
         descripcion: product.descripcion,
@@ -112,9 +100,9 @@ export const Products = () => {
         modelo: product.modelo,
         marca: product.marca,
         color: product.color,
-      });
+      })
     } else {
-      setEditingProduct(null);
+      setEditingProduct(null)
       setFormData({
         nombre: "",
         descripcion: "",
@@ -124,18 +112,18 @@ export const Products = () => {
         modelo: "",
         marca: "",
         color: "",
-      });
+      })
     }
-    setModalOpen(true);
-  };
+    setModalOpen(true)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!formData.categoriaId) {
-      toast.error("Debes seleccionar una categoría");
-      return;
+      toast.error("Debes seleccionar una categoría")
+      return
     }
-    setFormLoading(true);
+    setFormLoading(true)
     try {
       const submitData = {
         nombre: formData.nombre,
@@ -146,36 +134,37 @@ export const Products = () => {
         modelo: formData.modelo,
         marca: formData.marca,
         color: formData.color,
-      };
-      if (editingProduct) {
-        await updateProduct(editingProduct.id, submitData, token);
-        toast.success("Producto actualizado");
-      } else {
-        await addProduct(submitData, token);
-        toast.success("Producto creado");
       }
-      setModalOpen(false);
-      loadData();
+      console.log("Submit data product: ", submitData)
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, submitData, token)
+        toast.success("Producto actualizado")
+      } else {
+        await addProduct(submitData, token)
+        toast.success("Producto creado")
+      }
+      setModalOpen(false)
+      loadData()
     } catch (error) {
-      toast.error(error.message || "Error al guardar producto");
+      toast.error(error.message || "Error al guardar producto")
     } finally {
-      setFormLoading(false);
+      setFormLoading(false)
     }
-  };
+  }
 
   const handleDelete = async () => {
-    setFormLoading(true);
+    setFormLoading(true)
     try {
-      await removeProduct(deleteTarget.id, token);
-      toast.success("Producto eliminado");
-      setDeleteOpen(false);
-      loadData();
+      await removeProduct(deleteTarget.id, token)
+      toast.success("Producto eliminado")
+      setDeleteOpen(false)
+      loadData()
     } catch (error) {
-      toast.error(error.message || "Error al eliminar producto");
+      toast.error(error.message || "Error al eliminar producto")
     } finally {
-      setFormLoading(false);
+      setFormLoading(false)
     }
-  };
+  }
 
   const columns = [
     { key: "nombre", label: "Nombre" },
@@ -184,7 +173,7 @@ export const Products = () => {
     { key: "precio", label: "Precio" },
     { key: "stock", label: "Stock" },
     { key: "marca", label: "Marca" },
-  ];
+  ]
 
   return (
     <MainLayout>
@@ -209,8 +198,7 @@ export const Products = () => {
 
               {user?.role === "USER" && (
                 <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-700">
-                  Puedes ver productos. Solo administradores pueden crear,
-                  editar o eliminar.
+                  Puedes ver productos. Solo administradores pueden crear, editar o eliminar.
                 </div>
               )}
 
@@ -219,23 +207,19 @@ export const Products = () => {
                 data={products}
                 loading={loading}
                 onEdit={(product) => {
-                  if (
-                    !PERMISSIONS.ACTIONS.UPDATE_PRODUCT.includes(user?.role)
-                  ) {
-                    toast.error("No tienes permiso para editar productos");
-                    return;
+                  if (!PERMISSIONS.ACTIONS.UPDATE_PRODUCT.includes(user?.role)) {
+                    toast.error("No tienes permiso para editar productos")
+                    return
                   }
-                  handleOpenModal(product);
+                  handleOpenModal(product)
                 }}
                 onDelete={(product) => {
-                  if (
-                    !PERMISSIONS.ACTIONS.DELETE_PRODUCT.includes(user?.role)
-                  ) {
-                    toast.error("No tienes permiso para eliminar productos");
-                    return;
+                  if (!PERMISSIONS.ACTIONS.DELETE_PRODUCT.includes(user?.role)) {
+                    toast.error("No tienes permiso para eliminar productos")
+                    return
                   }
-                  setDeleteTarget(product);
-                  setDeleteOpen(true);
+                  setDeleteTarget(product)
+                  setDeleteOpen(true)
                 }}
               />
 
@@ -252,9 +236,7 @@ export const Products = () => {
                     <Input
                       id="nombre"
                       value={formData.nombre}
-                      onChange={(e) =>
-                        setFormData({ ...formData, nombre: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                       required
                     />
                   </div>
@@ -263,12 +245,7 @@ export const Products = () => {
                     <Textarea
                       id="descripcion"
                       value={formData.descripcion}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          descripcion: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                       required
                     />
                   </div>
@@ -276,9 +253,7 @@ export const Products = () => {
                     <Label htmlFor="categoria">Categoría *</Label>
                     <Select
                       value={formData.categoriaId}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, categoriaId: value })
-                      }
+                      onValueChange={(value) => setFormData({ ...formData, categoriaId: value })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona una categoría" />
@@ -300,9 +275,7 @@ export const Products = () => {
                         type="number"
                         step="0.01"
                         value={formData.precio}
-                        onChange={(e) =>
-                          setFormData({ ...formData, precio: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
                         required
                       />
                     </div>
@@ -312,9 +285,7 @@ export const Products = () => {
                         id="stock"
                         type="number"
                         value={formData.stock}
-                        onChange={(e) =>
-                          setFormData({ ...formData, stock: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
                         required
                       />
                     </div>
@@ -325,9 +296,7 @@ export const Products = () => {
                       <Input
                         id="marca"
                         value={formData.marca}
-                        onChange={(e) =>
-                          setFormData({ ...formData, marca: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
                       />
                     </div>
                     <div>
@@ -335,9 +304,7 @@ export const Products = () => {
                       <Input
                         id="modelo"
                         value={formData.modelo}
-                        onChange={(e) =>
-                          setFormData({ ...formData, modelo: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
                       />
                     </div>
                     <div>
@@ -345,9 +312,7 @@ export const Products = () => {
                       <Input
                         id="color"
                         value={formData.color}
-                        onChange={(e) =>
-                          setFormData({ ...formData, color: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                       />
                     </div>
                   </div>
@@ -367,5 +332,5 @@ export const Products = () => {
         </div>
       </div>
     </MainLayout>
-  );
+  )
 };
