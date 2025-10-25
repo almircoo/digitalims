@@ -60,14 +60,14 @@ export const Orders = () => {
     setFormLoading(true);
     try {
       console.log(" Creating order with data:", orderData);
-      await createOrder(orderData, token);
-
+      const response = await createOrder(orderData, token)
       const newOrder = {
-        id: Date.now(),
+        id: response.datos?.idPedido,
         ...orderData,
         cliente: customers.find((c) => c.id === orderData.clienteId),
         createdAt: new Date().toISOString(),
-      };
+      }
+
       const updatedOrders = [...orders, newOrder];
       setOrders(updatedOrders);
       localStorage.setItem("orders", JSON.stringify(updatedOrders));
@@ -114,7 +114,7 @@ export const Orders = () => {
     if (!confirm("¿Estás seguro de que deseas eliminar este pedido?")) return;
 
     try {
-      console.log(" Deleting order:", orderId);
+      console.log("Pedido borrado: ", orderId);
       await removeOrder(orderId, token);
 
       const updatedOrders = orders.filter((order) => order.id !== orderId);
