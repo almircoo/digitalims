@@ -49,12 +49,12 @@ export const OrderList = ({
   return (
     <div className="space-y-4">
       {orders.map((order) => (
-        <Card key={order.id} className="overflow-hidden">
+        <Card key={order.idPedido} className="overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg">Pedido #{order.id}</CardTitle>
+                  <CardTitle className="text-lg">Pedido #{order.idPedido}</CardTitle>
                   <Badge className={getStatusColor(order.estado)}>
                     {order.estado}
                   </Badge>
@@ -77,7 +77,7 @@ export const OrderList = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onDelete(order.id)}
+                    onClick={() => onDelete(order.idPedido)}
                     disabled={loading}
                     className="text-red-600 hover:text-red-700"
                   >
@@ -89,11 +89,11 @@ export const OrderList = ({
                   size="sm"
                   onClick={() =>
                     setExpandedOrder(
-                      expandedOrder === order.id ? null : order.id,
+                      expandedOrder === order.idPedido ? null : order.idPedido,
                     )
                   }
                 >
-                  {expandedOrder === order.id ? (
+                  {expandedOrder === order.idPedido ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (
                     <ChevronDown className="h-4 w-4" />
@@ -103,7 +103,7 @@ export const OrderList = ({
             </div>
           </CardHeader>
 
-          {expandedOrder === order.id && (
+          {expandedOrder === order.idPedido && (
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -150,7 +150,7 @@ export const OrderList = ({
                     {order.estado === "PENDIENTE" && (
                       <Button
                         size="sm"
-                        onClick={() => onStatusChange(order.id, "ENTREGADO")}
+                        onClick={() => onStatusChange(order.idPedido, "ENTREGADO")}
                         disabled={loading}
                       >
                         Marcar como Entregado
@@ -159,7 +159,7 @@ export const OrderList = ({
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => onStatusChange(order.id, "CANCELADO")}
+                      onClick={() => onStatusChange(order.idPedido, "CANCELADO")}
                       disabled={loading}
                     >
                       Cancelar pedido

@@ -16,6 +16,7 @@ import {
   updateOrderStatus,
   getCustomers,
   getProducts,
+  getOrders,
 } from "@/apis";
 import { toast } from "sonner";
 
@@ -27,6 +28,8 @@ export const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   useEffect(() => {
     loadData();
@@ -35,19 +38,32 @@ export const Orders = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [customersRes, productsRes] = await Promise.all([
+      const [customersRes, productsRes, ordersRes] = await Promise.all([
         getCustomers(token),
         getProducts(token),
+        getOrders(token, page, 10),
       ]);
+
       console.log("Customer order data: ", customersRes);
       console.log("productos order data: ", productsRes);
+      console.log("orders list data: ", ordersRes);
+
       setCustomers(customersRes.datos || []);
       setProducts(productsRes.datos || []);
 
-      const storedOrders = localStorage.getItem("orders");
-      if (storedOrders) {
-        setOrders(JSON.parse(storedOrders));
+      if (ordersRes.data && ordersRes.data.content) {
+        setOrders(ordersRes.data.content)
+        setTotalPages(ordersRes.data.totalPages)
+      } else if (ordersRes.datos && ordersRes.datos.content) {
+        setOrders(ordersRes.datos.content)
+        setTotalPages(ordersRes.datos.totalPages)
+      } else if (Array.isArray(ordersRes)) {
+        setOrders(ordersRes)
+      } else {
+        console.warn("respueta inesperada, response structure:", ordersRes)
+        setOrders([])
       }
+
     } catch (error) {
       console.error(" Error loading data:", error);
       toast.error("Error al cargar datos");
@@ -61,16 +77,7 @@ export const Orders = () => {
     try {
       console.log(" Creating order with data:", orderData);
       const response = await createOrder(orderData, token)
-      const newOrder = {
-        id: response.datos?.idPedido,
-        ...orderData,
-        cliente: customers.find((c) => c.id === orderData.clienteId),
-        createdAt: new Date().toISOString(),
-      }
-
-      const updatedOrders = [...orders, newOrder];
-      setOrders(updatedOrders);
-      localStorage.setItem("orders", JSON.stringify(updatedOrders));
+      await loadData()
 
       toast.success("Pedido creado exitosamente");
       setModalOpen(false);
@@ -89,19 +96,15 @@ export const Orders = () => {
     }
 
     try {
-      console.log(" Updating order status:", orderId, newStatus);
-      await updateOrderStatus(orderId, newStatus, token);
+      console.log("Updating order status:", orderId, newStatus)
+      await updateOrderStatus(orderId, newStatus, token)
 
-      const updatedOrders = orders.map((order) =>
-        order.id === orderId ? { ...order, estado: newStatus } : order,
-      );
-      setOrders(updatedOrders);
-      localStorage.setItem("orders", JSON.stringify(updatedOrders));
+      await loadData()
 
-      toast.success("Estado del pedido actualizado");
+      toast.success("Estado del pedido actualizado")
     } catch (error) {
-      console.error(" Error updating order status:", error);
-      toast.error(error.message || "Error al actualizar estado");
+      console.error("Error updating order status:", error)
+      toast.error(error.message || "Error al actualizar estado")
     }
   };
 
@@ -111,20 +114,18 @@ export const Orders = () => {
       return;
     }
 
-    if (!confirm("¿Estás seguro de que deseas eliminar este pedido?")) return;
+    if (!confirm("¿Estás seguro de que deseas eliminar este pedido?")) return
 
     try {
-      console.log("Pedido borrado: ", orderId);
-      await removeOrder(orderId, token);
+      console.log("Deleting order:", orderId)
+      await removeOrder(orderId, token)
 
-      const updatedOrders = orders.filter((order) => order.id !== orderId);
-      setOrders(updatedOrders);
-      localStorage.setItem("orders", JSON.stringify(updatedOrders));
+      await loadData()
 
-      toast.success("Pedido eliminado exitosamente");
+      toast.success("Pedido eliminado exitosamente")
     } catch (error) {
-      console.error(" Error deleting order:", error);
-      toast.error(error.message || "Error al eliminar pedido");
+      console.error("Error deleting order:", error)
+      toast.error(error.message || "Error al eliminar pedido")
     }
   };
 
