@@ -29,8 +29,7 @@ export const Dashbaord = () => {
     if (!token) {
       setLoading(false);
       return;
-    }
-
+    }    
     try {
       setError(null);
       const [productsRes, categoriesRes, customersRes, ordersRes] =
@@ -43,12 +42,12 @@ export const Dashbaord = () => {
 
       setStats({
         products: productsRes.totalElements || productsRes.datos?.length || 0,
-        categories:
-          categoriesRes.totalElements || categoriesRes.datos?.length || 0,
-        customers:
-          customersRes.totalElements || customersRes.datos?.length || 0,
-        orders: ordersRes.totalElements || ordersRes.datos?.length || 0,
+        categories: categoriesRes.totalElements || categoriesRes.datos?.length || 0,
+        customers: customersRes.totalElements || customersRes.datos?.length || 0,
+        orders: ordersRes.datos?.totalElements || ordersRes.totalElements || ordersRes.datos?.length || 0,
       });
+      
+      console.log('Orders datta', ordersRes)
     } catch (error) {
       console.error(" Error al cargar stats:", error);
       setError("Error al cargar las estadísticas");
