@@ -5,7 +5,7 @@ import {
   getProducts,
   getCategories,
   getCustomers,
-  getOrderStats,
+  getOrders,
 } from "@/apis";
 import { Package, FolderTree, Users, TrendingUp } from "lucide-react";
 import { Sidebar } from "@/layouts/Sidebar";
@@ -38,7 +38,7 @@ export const Dashbaord = () => {
           getProducts(token).catch(() => ({ totalElements: 0, data: [] })),
           getCategories(token).catch(() => ({ totalElements: 0, data: [] })),
           getCustomers(token).catch(() => ({ totalElements: 0, data: [] })),
-          getOrderStats(token).catch(() => ({ totalElements: 0, data: [] })),
+          getOrders(token).catch(() => ({ totalElements: 0, data: [] })),
         ]);
 
       setStats({
