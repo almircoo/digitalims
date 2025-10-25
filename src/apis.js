@@ -64,29 +64,22 @@ function request(path, { data = null, token = null, method = "GET" }) {
 }
 
 export function login(email, password) {
-  return request("v1/auth/login", {
+  return request("/v1/auth/login", {
     data: { email, password },
     method: "POST",
   })
 }
 
 export function register(userData) {
-  return request("v1/auth/register", {
+  return request("/v1/auth/register", {
     data: userData,
     method: "POST",
   })
 }
 
-// Use getOrderStats instead for dashboard stats
-
-export function getOrderStats(token) {
-  // Fallback endpoint - returns empty array if not available
-  return Promise.resolve({ data: [], totalElements: 0 })
-}
-
 // Categories CRUD
 export function addCategory(data, token) {
-  return request("v1/categorias", {
+  return request("/v1/categorias", {
     data,
     token,
     method: "POST",
@@ -94,14 +87,14 @@ export function addCategory(data, token) {
 }
 
 export function getCategories(token, page = 0, size = 10) {
-  return request(`v1/categorias?page=${page}&size=${size}`, {
+  return request(`/v1/categorias?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
 }
 
 export function updateCategory(id, data, token) {
-  return request(`v1/categorias/${id}`, {
+  return request(`/v1/categorias/${id}`, {
     data,
     token,
     method: "PUT",
@@ -109,7 +102,7 @@ export function updateCategory(id, data, token) {
 }
 
 export function removeCategory(id, token) {
-  return request(`v1/categorias/${id}`, {
+  return request(`/1/categorias/${id}`, {
     token,
     method: "DELETE",
   })
@@ -118,7 +111,7 @@ export function removeCategory(id, token) {
 // Products CRUD
 export function addProduct(data, token) {
   console.log("Adding product with data: ", data)
-  return request("v1/productos", {
+  return request("/v1/productos", {
     data,
     token,
     method: "POST",
@@ -126,14 +119,14 @@ export function addProduct(data, token) {
 }
 
 export function getProducts(token, page = 0, size = 10) {
-  return request(`v1/productos?page=${page}&size=${size}`, {
+  return request(`/v1/productos?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
 }
 
 export function updateProduct(id, data, token) {
-  return request(`v1/productos/${id}`, {
+  return request(`/v1/productos/${id}`, {
     data,
     token,
     method: "PUT",
@@ -141,7 +134,7 @@ export function updateProduct(id, data, token) {
 }
 
 export function removeProduct(id, token) {
-  return request(`v1/productos/${id}`, {
+  return request(`/v1/productos/${id}`, {
     token,
     method: "DELETE",
   })
@@ -149,7 +142,7 @@ export function removeProduct(id, token) {
 
 // Customers CRUD
 export function addCustomer(data, token) {
-  return request("v1/clientes", {
+  return request("/v1/clientes", {
     data,
     token,
     method: "POST",
@@ -157,14 +150,14 @@ export function addCustomer(data, token) {
 }
 
 export function getCustomers(token, page = 0, size = 10) {
-  return request(`v1/clientes?page=${page}&size=${size}`, {
+  return request(`/v1/clientes?page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
 }
 
 export function updateCustomer(id, data, token) {
-  return request(`v1/clientes/${id}`, {
+  return request(`/v1/clientes/${id}`, {
     data,
     token,
     method: "PUT",
@@ -172,15 +165,22 @@ export function updateCustomer(id, data, token) {
 }
 
 export function removeCustomer(id, token) {
-  return request(`v1/clientes/${id}`, {
+  return request(`/v1/clientes/${id}`, {
     token,
     method: "DELETE",
   })
 }
 
-// Orders CRUD - Note: OrderController doesn't have GET endpoint
+// Orders CRUD 
+export function getOrders(token, page = 0, size = 10) {
+  return request(`/v1/pedidos?page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+
 export function createOrder(data, token) {
-  return request("v1/pedidos", {
+  return request("/v1/pedidos", {
     data,
     token,
     method: "POST",
@@ -188,7 +188,7 @@ export function createOrder(data, token) {
 }
 
 export function updateOrder(id, data, token) {
-  return request(`v1/pedidos/${id}`, {
+  return request(`/v1/pedidos/${id}`, {
     data,
     token,
     method: "PUT",
@@ -196,21 +196,21 @@ export function updateOrder(id, data, token) {
 }
 
 export function removeOrder(id, token) {
-  return request(`v1/pedidos/${id}`, {
+  return request(`/v1/pedidos/${id}`, {
     token,
     method: "DELETE",
   })
 }
 
 export function updateOrderStatus(id, estado, token) {
-  return request(`v1/pedidos/${id}/estado?estado=${estado}`, {
+  return request(`/v1/pedidos/${id}/estado?estado=${estado}`, {
     token,
     method: "PATCH",
   });
 }
 // Reports
 export function getDashboardReport(startDate, endDate, token) {
-  return request(`v1/reportes/dashboard?fechaInicio=${startDate}&fechaFin=${endDate}`, {
+  return request(`/v1/reportes/dashboard?fechaInicio=${startDate}&fechaFin=${endDate}`, {
     token,
     method: "GET",
   })
@@ -218,7 +218,7 @@ export function getDashboardReport(startDate, endDate, token) {
 
 export function getSalesByProductReport(startDate, endDate, page = 0, size = 10, token) {
   return request(
-    `v1/reportes/ventas/producto?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    `/v1/reportes/ventas/producto?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
     {
       token,
       method: "GET",
@@ -228,7 +228,7 @@ export function getSalesByProductReport(startDate, endDate, page = 0, size = 10,
 
 export function getSalesByCategoryReport(startDate, endDate, page = 0, size = 10, token) {
   return request(
-    `v1/reportes/ventas/categoria?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    `/v1/reportes/ventas/categoria?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
     {
       token,
       method: "GET",
@@ -237,7 +237,7 @@ export function getSalesByCategoryReport(startDate, endDate, page = 0, size = 10
 }
 
 export function getSalesByCustomerReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(`v1/reportes/ventas/cliente?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+  return request(`/v1/reportes/ventas/cliente?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
@@ -245,7 +245,7 @@ export function getSalesByCustomerReport(startDate, endDate, page = 0, size = 10
 
 export function getTopProductsReport(startDate, endDate, page = 0, size = 10, token) {
   return request(
-    `v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    `/v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
     {
       token,
       method: "GET",
@@ -254,7 +254,7 @@ export function getTopProductsReport(startDate, endDate, page = 0, size = 10, to
 }
 
 export function getLowStockProductsReport(stockMinimo = 10, page = 0, size = 10, token) {
-  return request(`v1/reportes/productos/stock-bajo?stockMinimo=${stockMinimo}&page=${page}&size=${size}`, {
+  return request(`/v1/reportes/productos/stock-bajo?stockMinimo=${stockMinimo}&page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
@@ -262,7 +262,7 @@ export function getLowStockProductsReport(stockMinimo = 10, page = 0, size = 10,
 
 export function getFrequentCustomersReport(startDate, endDate, page = 0, size = 10, token) {
   return request(
-    `v1/reportes/clientes/frecuentes?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
+    `/v1/reportes/clientes/frecuentes?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
     {
       token,
       method: "GET",
@@ -271,7 +271,7 @@ export function getFrequentCustomersReport(startDate, endDate, page = 0, size = 
 }
 
 export function getTopCustomersReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(`v1/reportes/clientes/top?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+  return request(`/v1/reportes/clientes/top?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
