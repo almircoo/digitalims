@@ -28,8 +28,6 @@ export const OrderList = ({
   const getStatusColor = (status) => {
     const colors = {
       PENDIENTE: "bg-yellow-100 text-yellow-800",
-      CONFIRMADO: "bg-blue-100 text-blue-800",
-      ENVIADO: "bg-purple-100 text-purple-800",
       ENTREGADO: "bg-green-100 text-green-800",
       CANCELADO: "bg-red-100 text-red-800",
     };
@@ -152,24 +150,6 @@ export const OrderList = ({
                     {order.estado === "PENDIENTE" && (
                       <Button
                         size="sm"
-                        onClick={() => onStatusChange(order.id, "CONFIRMADO")}
-                        disabled={loading}
-                      >
-                        Confirmar
-                      </Button>
-                    )}
-                    {order.estado === "CONFIRMADO" && (
-                      <Button
-                        size="sm"
-                        onClick={() => onStatusChange(order.id, "ENVIADO")}
-                        disabled={loading}
-                      >
-                        Marcar como Enviado
-                      </Button>
-                    )}
-                    {order.estado === "ENVIADO" && (
-                      <Button
-                        size="sm"
                         onClick={() => onStatusChange(order.id, "ENTREGADO")}
                         disabled={loading}
                       >
@@ -182,14 +162,14 @@ export const OrderList = ({
                       onClick={() => onStatusChange(order.id, "CANCELADO")}
                       disabled={loading}
                     >
-                      Cancelar
+                      Cancelar pedido
                     </Button>
                   </div>
                 )}
               {!canChangeStatus &&
                 (order.estado === "PENDIENTE" ||
-                  order.estado === "CONFIRMADO" ||
-                  order.estado === "ENVIADO") && (
+                  order.estado === "ENTREGADO" ||
+                  order.estado === "CANCELADO") && (
                   <div className="rounded-md bg-amber-50 p-2 text-xs text-amber-700">
                     Solo administradores pueden cambiar el estado de los
                     pedidos.

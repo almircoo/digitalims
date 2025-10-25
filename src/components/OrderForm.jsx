@@ -251,8 +251,6 @@ export const OrderForm = ({ customers, products, onSubmit, loading }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PENDIENTE">Pendiente</SelectItem>
-                <SelectItem value="ENTREGADO">Entregado</SelectItem>
-                <SelectItem value="CANCELADO">Cancelado</SelectItem>
               </SelectContent>
             </Select>
           </div>
