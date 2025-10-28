@@ -216,63 +216,99 @@ export function getDashboardReport(startDate, endDate, token) {
   })
 }
 
-export function getSalesByProductReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(
-    `/v1/reportes/ventas/producto?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
-    {
-      token,
-      method: "GET",
-    },
-  )
-}
-
-export function getSalesByCategoryReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(
-    `/v1/reportes/ventas/categoria?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
-    {
-      token,
-      method: "GET",
-    },
-  )
-}
-
-export function getSalesByCustomerReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(`/v1/reportes/ventas/cliente?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+//
+export function getVentasPorPeriodo(startDate, endDate, token){
+  return request(`/v1/reportes/ventas/periodo?fechaInicio=${startDate}&fechaFin=${endDate}`, {
     token,
     method: "GET",
   })
 }
 
-export function getTopProductsReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(
-    `/v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
-    {
-      token,
-      method: "GET",
-    },
-  )
+export function getVentasPorProducto(startDate, endDate, page = 0, size = 10, sortBy = 'totalVendido', sortDirection = 'DESC', token){
+  return request(`/v1/reportes/ventas/producto?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`, {
+    token,
+    method: "GET",
+  })
 }
-
-export function getLowStockProductsReport(stockMinimo = 10, page = 0, size = 10, token) {
+export function getVentasPorCategoria(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/ventas/categoria?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+export function getVentasPorCliente(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/ventas/cliente?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+export function getProductosMasVendidos(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+export function getProductosStockBajo(stockMinimo = 10, page = 0, size = 10, token){
   return request(`/v1/reportes/productos/stock-bajo?stockMinimo=${stockMinimo}&page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
 }
 
-export function getFrequentCustomersReport(startDate, endDate, page = 0, size = 10, token) {
-  return request(
-    `/v1/reportes/clientes/frecuentes?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`,
-    {
-      token,
-      method: "GET",
-    },
-  )
+export function getProductosMasVendidos(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/productos/mas-vendidos?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
 }
-
-export function getTopCustomersReport(startDate, endDate, page = 0, size = 10, token) {
+export function getClientesFrecuentes(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/clientes/frecuentes?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+export function getClientesMejorCompra(startDate, endDate, page = 0, size = 10, token){
+  return request(`/v1/reportes/clientes/mejor-compra?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
+    token,
+    method: "GET",
+  })
+}
+export function getClientesTop(startDate, endDate, page = 0, size = 10, token){
   return request(`/v1/reportes/clientes/top?fechaInicio=${startDate}&fechaFin=${endDate}&page=${page}&size=${size}`, {
     token,
     method: "GET",
   })
 }
+
+export function getBuscarBoletaPorDni(dni, estado = null, fechaInicio = null, fechaFin = null, page = 0, size = 10, token){
+  let path = `/v1/reportes/boleta?dni=${dni}&page=${page}&size=${size}`;
+  if (estado) {
+    path += `&estado=${estado}`;
+  }
+  if (fechaInicio) {
+    path += `&fechaInicio=${fechaInicio}`;
+  }
+  if (fechaFin) {
+    path += `&fechaFin=${fechaFin}`;
+  }
+  return request(path, {
+    token,
+    method: "GET",
+  })
+}
+
+export function exportarReporte(filtro, token){
+  return request(`/v1/reportes/exportar`,{
+    token,
+    method: "POST",
+    body: JSON.stringify(filtro)
+  })
+}
+
+export function getMetricasRapidas(startDate, endDate, token){
+  return request(`/v1/reportes/metricas/rapidas?fechaInicio=${startDate}&fechaFin=${endDate}`, {
+    token,
+    method: "GET"
+  })
+}
+

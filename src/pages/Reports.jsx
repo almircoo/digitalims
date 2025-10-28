@@ -15,94 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getDashboardReport, getSalesByProductReport,
-  getSalesByCategoryReport,
-  getSalesByCustomerReport,
-  getTopProductsReport,
-  getLowStockProductsReport,
-  getFrequentCustomersReport,
-  getTopCustomersReport, } from "@/apis";
-import { Download, Calendar } from "lucide-react";
+import { } from "@/apis";
+import { Download, Calendar} from "lucide-react";
 import { toast } from "sonner";
-
 export const Reports = () => {
-  const { token, user } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0],
-    endDate: new Date().toISOString().split("T")[0],
-  })
-  const [dashboardData, setDashboardData] = useState(null)
-  const [salesByProduct, setSalesByProduct] = useState([])
-  const [salesByCategory, setSalesByCategory] = useState([])
-  const [salesByCustomer, setSalesByCustomer] = useState([])
-  const [topProducts, setTopProducts] = useState([])
-  const [lowStockProducts, setLowStockProducts] = useState([])
-  const [frequentCustomers, setFrequentCustomers] = useState([])
-  const [topCustomers, setTopCustomers] = useState([])
-
-  useEffect(() => {
-    if (user?.role === "ADMIN") {
-      loadReports()
-    }
-  }, [token, user])
-
-  const loadReports = async () => {
-    try {
-      setLoading(true)
-      const startDateTime = `${dateRange.startDate}T00:00:00`
-      const endDateTime = `${dateRange.endDate}T23:59:59`
-
-      const [dashboard, products, categories, customers, topProds, lowStock, frequent, topCust] = await Promise.all([
-        getDashboardReport(startDateTime, endDateTime, token),
-        getSalesByProductReport(startDateTime, endDateTime, 0, 10, token),
-        getSalesByCategoryReport(startDateTime, endDateTime, 0, 10, token),
-        getSalesByCustomerReport(startDateTime, endDateTime, 0, 10, token),
-        getTopProductsReport(startDateTime, endDateTime, 0, 10, token),
-        getLowStockProductsReport(10, 0, 10, token),
-        getFrequentCustomersReport(startDateTime, endDateTime, 0, 10, token),
-        getTopCustomersReport(startDateTime, endDateTime, 0, 10, token),
-      ])
-
-      setDashboardData(dashboard)
-      setSalesByProduct(products.content || [])
-      setSalesByCategory(categories.content || [])
-      setSalesByCustomer(customers.content || [])
-      setTopProducts(topProds.content || [])
-      setLowStockProducts(lowStock.content || [])
-      setFrequentCustomers(frequent.content || [])
-      setTopCustomers(topCust.content || [])
-
-      toast.success("Reportes cargados exitosamente")
-    } catch (error) {
-      console.error("Error loading reports:", error)
-      toast.error("Error al cargar reportes")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleDateChange = (field, value) => {
-    setDateRange((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleExport = (reportName) => {
-    toast.info(`Exportando ${reportName}...`)
-    // TODO:
-  }
-
-  if (user?.role !== "ADMIN") {
-    return (
-      <MainLayout>
-        <div className="container py-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Acceso Denegado</h1>
-            <p className="text-muted-foreground mt-2">Solo administradores pueden ver reportes</p>
-          </div>
-        </div>
-      </MainLayout>
-    )
-  }
 
   return (
     <MainLayout>
@@ -120,7 +36,6 @@ export const Reports = () => {
                 <p className="text-muted-foreground mt-2">Análisis de ventas, productos y clientes</p>
               </div>
 
-              {/* Date Range Filter */}
               <Card className="p-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
@@ -150,7 +65,6 @@ export const Reports = () => {
                 </div>
               </Card>
 
-              {/* Dashboard Metrics */}
               {dashboardData && (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <Card className="p-4">
@@ -174,7 +88,6 @@ export const Reports = () => {
                 </div>
               )}
 
-              {/* Reports Tabs */}
               <Tabs defaultValue="sales" className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="sales">Ventas</TabsTrigger>
@@ -183,7 +96,6 @@ export const Reports = () => {
                   <TabsTrigger value="inventory">Inventario</TabsTrigger>
                 </TabsList>
 
-                {/* Sales Tab */}
                 <TabsContent value="sales" className="space-y-4">
                   <Card className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -198,6 +110,8 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Producto</TableHead>
+                            <TableHead>Marca</TableHead>
+                            <TableHead>Modelo</TableHead>
                             <TableHead>Cantidad</TableHead>
                             <TableHead>Total</TableHead>
                           </TableRow>
@@ -206,14 +120,16 @@ export const Reports = () => {
                           {salesByProduct.length > 0 ? (
                             salesByProduct.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item[0] || "N/A"}</TableCell>
-                                <TableCell>{item[1] || 0}</TableCell>
-                                <TableCell>${(item[2] || 0).toFixed(2)}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.marca || "N/A"}</TableCell>
+                                <TableCell>{item.modelo || "N/A"}</TableCell>
+                                <TableCell>{item.totalVendido || 0}</TableCell>
+                                <TableCell>${(item.totalVentas || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="3" className="text-center text-muted-foreground">
+                              <TableCell colSpan="5" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -236,6 +152,7 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Categoría</TableHead>
+                            <TableHead>Total Unidades</TableHead>
                             <TableHead>Total Ventas</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -243,13 +160,14 @@ export const Reports = () => {
                           {salesByCategory.length > 0 ? (
                             salesByCategory.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item.nombreCategoria || "N/A"}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.totalUnidades || 0}</TableCell>
                                 <TableCell>${(item.totalVentas || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="2" className="text-center text-muted-foreground">
+                              <TableCell colSpan="3" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -272,20 +190,24 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Cliente</TableHead>
-                            <TableHead>Total Gastado</TableHead>
+                            <TableHead>Apellido</TableHead>
+                            <TableHead>Total Pedidos</TableHead>
+                            <TableHead>Monto Total</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {salesByCustomer.length > 0 ? (
                             salesByCustomer.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item[0] || "N/A"}</TableCell>
-                                <TableCell>${(item[1] || 0).toFixed(2)}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.apellido || "N/A"}</TableCell>
+                                <TableCell>{item.totalPedidos || 0}</TableCell>
+                                <TableCell>${(item.montoTotal || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="2" className="text-center text-muted-foreground">
+                              <TableCell colSpan="4" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -296,7 +218,6 @@ export const Reports = () => {
                   </Card>
                 </TabsContent>
 
-                {/* Products Tab */}
                 <TabsContent value="products" className="space-y-4">
                   <Card className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -311,22 +232,24 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Producto</TableHead>
+                            <TableHead>Marca</TableHead>
+                            <TableHead>Modelo</TableHead>
                             <TableHead>Cantidad Vendida</TableHead>
-                            <TableHead>Ingresos</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {topProducts.length > 0 ? (
                             topProducts.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item.nombreProducto || "N/A"}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.marca || "N/A"}</TableCell>
+                                <TableCell>{item.modelo || "N/A"}</TableCell>
                                 <TableCell>{item.totalVendido || 0}</TableCell>
-                                <TableCell>${(item.ingresos || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="3" className="text-center text-muted-foreground">
+                              <TableCell colSpan="4" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -337,7 +260,6 @@ export const Reports = () => {
                   </Card>
                 </TabsContent>
 
-                {/* Customers Tab */}
                 <TabsContent value="customers" className="space-y-4">
                   <Card className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -352,20 +274,26 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Cliente</TableHead>
+                            <TableHead>Apellido</TableHead>
+                            <TableHead>Email</TableHead>
                             <TableHead>Total Pedidos</TableHead>
+                            <TableHead>Total Gastado</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {frequentCustomers.length > 0 ? (
                             frequentCustomers.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item[0] || "N/A"}</TableCell>
-                                <TableCell>{item[1] || 0}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.apellido || "N/A"}</TableCell>
+                                <TableCell>{item.email || "N/A"}</TableCell>
+                                <TableCell>{item.totalPedidos || 0}</TableCell>
+                                <TableCell>${(item.totalgastado || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="2" className="text-center text-muted-foreground">
+                              <TableCell colSpan="5" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -388,7 +316,9 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Cliente</TableHead>
+                            <TableHead>Apellido</TableHead>
                             <TableHead>Email</TableHead>
+                            <TableHead>Total Pedidos</TableHead>
                             <TableHead>Total Gastado</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -396,14 +326,16 @@ export const Reports = () => {
                           {topCustomers.length > 0 ? (
                             topCustomers.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item.nombreCliente || "N/A"}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.apellido || "N/A"}</TableCell>
                                 <TableCell>{item.email || "N/A"}</TableCell>
+                                <TableCell>{item.totalPedidos || 0}</TableCell>
                                 <TableCell>${(item.totalGastado || 0).toFixed(2)}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="3" className="text-center text-muted-foreground">
+                              <TableCell colSpan="5" className="text-center text-muted-foreground">
                                 No hay datos disponibles
                               </TableCell>
                             </TableRow>
@@ -414,7 +346,6 @@ export const Reports = () => {
                   </Card>
                 </TabsContent>
 
-                {/* Inventory Tab */}
                 <TabsContent value="inventory" className="space-y-4">
                   <Card className="p-4">
                     <div className="flex justify-between items-center mb-4">
@@ -429,22 +360,28 @@ export const Reports = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Producto</TableHead>
+                            <TableHead>Marca</TableHead>
+                            <TableHead>Modelo</TableHead>
                             <TableHead>Stock Actual</TableHead>
-                            <TableHead>Stock Mínimo</TableHead>
+                            <TableHead>Precio</TableHead>
+                            <TableHead>Categoría</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {lowStockProducts.length > 0 ? (
                             lowStockProducts.map((item, idx) => (
                               <TableRow key={idx}>
-                                <TableCell>{item[0] || "N/A"}</TableCell>
-                                <TableCell>{item[1] || 0}</TableCell>
-                                <TableCell>{item[2] || 10}</TableCell>
+                                <TableCell>{item.nombre || "N/A"}</TableCell>
+                                <TableCell>{item.marca || "N/A"}</TableCell>
+                                <TableCell>{item.modelo || "N/A"}</TableCell>
+                                <TableCell>{item.stock || 0}</TableCell>
+                                <TableCell>${(item.precio || 0).toFixed(2)}</TableCell>
+                                <TableCell>{item.categoria || "N/A"}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan="3" className="text-center text-muted-foreground">
+                              <TableCell colSpan="6" className="text-center text-muted-foreground">
                                 No hay productos con stock bajo
                               </TableCell>
                             </TableRow>
