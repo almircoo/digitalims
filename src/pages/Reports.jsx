@@ -191,28 +191,29 @@ export const Reports = () => {
           lowStockPromise,
         ]);
 
-        console.log("salesPeriod response:", salesPeriod);
-        console.log(
-          "salesPeriod type:",
-          typeof salesPeriod,
-          "isArray:",
-          Array.isArray(salesPeriod),
-        );
+        console.log("Metricas", metrics)
+        console.log("Ventas por producto: ", salesProductRes)
+        console.log("salesPeriod response: ", salesPeriod);
+        console.log("Top Productos vendidos: ", topProductsRes)
+        console.log("Clientes con mas venats: ", salesCustomerRes)
+        console.log("Clientes freceuntes: ", frequentCustomersRes)
+        console.log("Customer Tops: ", topCustomersRes)
+        console.log("Low stock: ", lowStockRes)
 
         setQuickMetrics(metrics);
 
         if (Array.isArray(salesPeriod)) {
           setSalesByPeriod(salesPeriod);
-        } else if (salesPeriod?.datos && Array.isArray(salesPeriod.datos)) {
-          setSalesByPeriod(salesPeriod.datos);
-        } else if (salesPeriod?.data && Array.isArray(salesPeriod.data)) {
-          setSalesByPeriod(salesPeriod.data);
+        } else if (salesPeriod?.metricas && Array.isArray(salesPeriod.metricas)) {
+          setSalesByPeriod(salesPeriod.metricas);
+        } else if (salesPeriod?.metricas && Array.isArray(salesPeriod.metricas)) {
+          setSalesByPeriod(salesPeriod.metricas);
         } else {
           console.warn("salesPeriod is not an array, setting empty array");
           setSalesByPeriod([]);
         }
 
-        setSalesByProduct(salesProductRes?.datos || []);
+        setSalesByProduct(salesProductRes?.content || []);
         setProductTotalPages(salesProductRes?.totalPages || 1);
 
         setSalesByCategory(salesCategoryRes?.content || []);
@@ -252,12 +253,12 @@ export const Reports = () => {
 
     setLoading(true);
     try {
-      // Simulación de los filtros, se enviaría el tipo de reporte, fechas y más.
+      // Simulafiltros, se enviaría el tipo de reporte, fechas y mas.
       const filtro = {
         reporte: reportName,
         fechaInicio: dateRange.startDate,
         fechaFin: dateRange.endDate,
-        // Aquí se pueden agregar más parámetros como page/size si se exporta la página actual
+        // Aquí se pueden agregaran mas parametros
       };
 
       const response = await exportarReporte(filtro, token);
@@ -386,7 +387,7 @@ export const Reports = () => {
                     </div>
                     <p className="text-xl md:text-2xl font-bold mt-2 text-foreground">
                       $
-                      {quickMetrics.totalVentas
+                      {(quickMetrics.totalVentas || 0)
                         ?.toFixed(2)
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ",") || "0.00"}
                     </p>
@@ -404,7 +405,7 @@ export const Reports = () => {
                       <TrendingUp className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-xl md:text-2xl font-bold mt-2 text-foreground">
-                      ${quickMetrics.pedidosPromedio?.toFixed(2) || "0.00"}
+                      ${quickMetrics.ticketPromedio || "0.00"}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Valor promedio de pedido
@@ -420,7 +421,7 @@ export const Reports = () => {
                       <Users className="h-5 w-5 text-purple-600" />
                     </div>
                     <p className="text-xl md:text-2xl font-bold mt-2 text-foreground">
-                      {quickMetrics.clientesNuevos || 0}
+                      {quickMetrics.clientesUnicos || 0}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Registrados en el período
@@ -436,7 +437,7 @@ export const Reports = () => {
                       <Package className="h-5 w-5 text-red-600" />
                     </div>
                     <p className="text-xl md:text-2xl font-bold mt-2 text-foreground">
-                      {quickMetrics.productosVendidos || 0}
+                      {quickMetrics.totalPedidos || 0}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Total de ítems
@@ -587,8 +588,9 @@ export const Reports = () => {
                                 <TableCell className="text-right font-semibold">
                                   $
                                   {(item.totalVentas || 0)
-                                    .toFixed(2)
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    // .toFixed(2)
+                                    // .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                    }
                                 </TableCell>
                               </TableRow>
                             ))
@@ -653,8 +655,9 @@ export const Reports = () => {
                                 <TableCell className="text-right font-semibold">
                                   $
                                   {(item.totalVentas || 0)
-                                    .toFixed(2)
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    // .toFixed(2)
+                                    // .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                    }
                                 </TableCell>
                               </TableRow>
                             ))
