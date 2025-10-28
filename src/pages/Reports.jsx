@@ -191,10 +191,28 @@ export const Reports = () => {
           lowStockPromise,
         ]);
 
-        setQuickMetrics(metrics);
-        setSalesByPeriod(salesPeriod);
+        console.log("salesPeriod response:", salesPeriod);
+        console.log(
+          "salesPeriod type:",
+          typeof salesPeriod,
+          "isArray:",
+          Array.isArray(salesPeriod),
+        );
 
-        setSalesByProduct(salesProductRes?.content || []);
+        setQuickMetrics(metrics);
+
+        if (Array.isArray(salesPeriod)) {
+          setSalesByPeriod(salesPeriod);
+        } else if (salesPeriod?.datos && Array.isArray(salesPeriod.datos)) {
+          setSalesByPeriod(salesPeriod.datos);
+        } else if (salesPeriod?.data && Array.isArray(salesPeriod.data)) {
+          setSalesByPeriod(salesPeriod.data);
+        } else {
+          console.warn("salesPeriod is not an array, setting empty array");
+          setSalesByPeriod([]);
+        }
+
+        setSalesByProduct(salesProductRes?.datos || []);
         setProductTotalPages(salesProductRes?.totalPages || 1);
 
         setSalesByCategory(salesCategoryRes?.content || []);
@@ -325,7 +343,7 @@ export const Reports = () => {
                     <Input
                       id="startDate"
                       type="date"
-                      value={dateRange.startDate.split("T"[0])}
+                      value={dateRange.startDate.split("T")[0]}
                       onChange={(e) =>
                         handleDateChange("startDate", e.target.value)
                       }
@@ -336,7 +354,7 @@ export const Reports = () => {
                     <Input
                       id="endDate"
                       type="date"
-                      value={dateRange.endDate.split("T"[0])}
+                      value={dateRange.endDate.split("T")[0]}
                       onChange={(e) =>
                         handleDateChange("endDate", e.target.value)
                       }
@@ -473,7 +491,7 @@ export const Reports = () => {
                     </div>
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart
-                        data={salesByPeriod}
+                        data={Array.isArray(salesByPeriod) ? salesByPeriod : []}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
