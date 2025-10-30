@@ -347,7 +347,7 @@ export function getClientesTop(startDate, endDate, page = 0, size = 10, token) {
   );
 }
 
-export function getBuscarBoletaPorDni(dni,estado = null,fechaInicio = null,fechaFin = null, page = 0,size = 10,token,
+export function getBuscarBoletaPorDni(dni, estado = null, fechaInicio = null, fechaFin = null, page = 0,size = 10,token,
 ) {
   let path = `/v1/reportes/boleta?dni=${dni}&page=${page}&size=${size}`;
   if (estado) {
