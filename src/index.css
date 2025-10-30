@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* colores Las variables HSL :
-
-H: Hue (matiz, en grados de 0° a 360°: rojo = 0°, verde = 120°, azul = 240°, etc.)
-
-S: Saturation (saturación, porcentaje de intensidad del color)
-
-L: Lightness (luminosidad, porcentaje de claridad)
- */
 @layer base {
   :root {
     --background: 42 33% 94%;
@@ -58,14 +50,34 @@ L: Lightness (luminosidad, porcentaje de claridad)
 }
 
 @layer base {
-  /* A todos los elementos *, les aplica el color de borde y una fuente. */
   * {
     @apply border-border;
-    font-family: "Nunito", sans-serif;
+    font-family: "Space Grotesk", sans-serif;
   }
-  /* A body, le aplica el fondo y el texto usando las variables definidas antes (bg-background, text-foreground) */
   body {
     @apply bg-background text-foreground;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Mejorar tamaños de fuente para mejor legibilidad */
+  h1 {
+    @apply text-3xl font-bold;
+  }
+  h2 {
+    @apply text-2xl font-bold;
+  }
+  h3 {
+    @apply text-xl font-semibold;
+  }
+  h4 {
+    @apply text-lg font-semibold;
+  }
+  p {
+    @apply text-base;
+  }
+  small {
+    @apply text-sm;
   }
 }
 
