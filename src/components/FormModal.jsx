@@ -23,23 +23,19 @@ export const FormModal = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+          <DialogTitle className="text-2xl">{title}</DialogTitle>
+          {description && <DialogDescription className="text-base">{description}</DialogDescription>}
         </DialogHeader>
         <div className="space-y-4">
           {children}
           {showFooter && (
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="text-base h-10">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={loading} onClick={onSubmit}>
+              <Button type="submit" disabled={loading} onClick={onSubmit} className="text-base h-10">
                 {loading ? (
                   <>
                     <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
