@@ -95,8 +95,8 @@ export const Orders = () => {
         token,
       )
 
-      if (response.datos && Array.isArray(response.datos)) {
-        const sortedOrders = [...response.datos].sort((a, b) => b.idPedido - a.idPedido)
+      if (response.content && Array.isArray(response.content)) {
+        const sortedOrders = [...response.content].sort((a, b) => b.idPedido - a.idPedido)
         setOrders(sortedOrders)
       } else if (response.data && response.data.content) {
         const sortedOrders = [...response.data.content].sort((a, b) => b.idPedido - a.idPedido)
