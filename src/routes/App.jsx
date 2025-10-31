@@ -12,6 +12,7 @@ import { Products } from "@/pages/Products";
 import { Customers } from "@/pages/Customers";
 import { Orders } from "@/pages/Orders";
 import { Reports } from "@/pages/Reports";
+import { Profile } from "@/pages/Profile";
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <Reports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute requiredRole={["ADMIN", "USER"]}>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
