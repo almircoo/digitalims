@@ -153,18 +153,41 @@ export const Reports = () => {
 
         console.log("Metrcias: ", metrics)
         console.log("Ventas por periodo: ", salesPeriod)
+        console.log("Frecuenet customer:", frequentCustomersRes)
+        console.log("Top customers: ", topCustomersRes)
         setQuickMetrics(metrics)
 
         let chartData = []
         if (salesPeriod?.datos && Array.isArray(salesPeriod.datos)) {
-          console.log("Datos del array:", salesPeriod.datos)
-          // Mapear los datos a la estructura que espera el gráfico
-          chartData = salesPeriod.datos.map((item) => ({
-            fecha: item.fechaPedido || "N/A",
-            ventas: item.totalVentas || 0,
-            pedidos: item.totalPedidos || 0,
-          }))
-          console.log("Datos mapeados para gráfico:", chartData)
+          console.log("Array de datos raw:", salesPeriod.datos)
+
+          const groupedByDate = {}
+
+          salesPeriod.datos.forEach((item) => {
+            // Extraer solo la fecha 
+            const fechaCompleta = item.fechaPedido || item.fecha || ""
+            const fechaSimple = fechaCompleta.split(" ")[0] // "24-10-2025"
+
+            if (!groupedByDate[fechaSimple]) {
+              groupedByDate[fechaSimple] = {
+                fecha: fechaSimple,
+                ventas: 0,
+                pedidos: 0,
+              }
+            }
+
+            groupedByDate[fechaSimple].ventas += item.total || 0
+            groupedByDate[fechaSimple].pedidos += 1
+          })
+
+          // Convertir objeto a array y ordenar por fecha
+          chartData = Object.values(groupedByDate).sort((a, b) => {
+            const [diaA, mesA, anoA] = a.fecha.split("-")
+            const [diaB, mesB, anoB] = b.fecha.split("-")
+            return new Date(`${mesA}-${diaA}-${anoA}`) - new Date(`${mesB}-${diaB}-${anoB}`)
+          })
+
+          console.log("Datos agrupados y mapeados:", chartData)
         } else if (Array.isArray(salesPeriod)) {
           chartData = salesPeriod
         }
@@ -371,10 +394,8 @@ export const Reports = () => {
               ) : loading ? (
                 renderLoadingState()
               ) : null}
-            </div>
 
-            <div className="lg:col-span-3 lg:col-start-2">
-              <Tabs defaultValue="sales" className="w-full">
+              <Tabs defaultValue="sales" className="w-full py-4">
                 <TabsList className="grid w-full grid-cols-4 h-11 bg-gray-100 dark:bg-gray-800">
                   <TabsTrigger value="sales" className="font-semibold text-sm flex items-center">
                     <BarChart3 className="h-4 w-4 mr-1" /> Ventas
@@ -392,52 +413,7 @@ export const Reports = () => {
 
                 {/* Pestaña: Ventas */}
                 <TabsContent value="sales" className="space-y-6 mt-4">
-                  {/* Ventas por Período */}
-                  {/* <Card className="p-6 shadow-lg">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-bold flex items-center text-gray-800 dark:text-gray-100">
-                        <TrendingUp className="h-5 w-5 mr-2 text-primary" /> Tendencia de Ventas
-                      </h3>
-                      <p className="text-sm text-muted-foreground">Ventas y pedidos diarios</p>
-                    </div>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart
-                        data={Array.isArray(salesByPeriod) ? salesByPeriod : []}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis dataKey="fecha" stroke="#666" fontSize={12} />
-                        <YAxis yAxisId="left" stroke="#3b82f6" fontSize={12} domain={[0, "auto"]} />
-                        <YAxis yAxisId="right" orientation="right" stroke="#10b981" fontSize={12} domain={[0, "auto"]} />
-                        <Tooltip
-                          formatter={(value, name) => [
-                            name === "ventas" ? `$${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : value,
-                            name === "ventas" ? "Ventas" : "Pedidos",
-                          ]}
-                          labelFormatter={(label) => `Fecha: ${label}`}
-                        />
-                        <Legend iconType="circle" wrapperStyle={{ paddingTop: "10px" }} />
-                        <Line
-                          yAxisId="left"
-                          type="monotone"
-                          dataKey="ventas"
-                          stroke="#3b82f6"
-                          strokeWidth={2}
-                          name="Total Ventas"
-                          dot={false}
-                        />
-                        <Line
-                          yAxisId="right"
-                          type="monotone"
-                          dataKey="pedidos"
-                          stroke="#10b981"
-                          strokeWidth={2}
-                          name="Total Pedidos"
-                          dot={false}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </Card> */}
+                  
                   <Card className="p-6 shadow-lg">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-xl font-bold flex items-center text-gray-800 dark:text-gray-100">
@@ -808,7 +784,6 @@ export const Reports = () => {
                 </TabsContent>
               </Tabs>
             </div>
-
             
           </div>
           
