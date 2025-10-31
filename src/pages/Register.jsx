@@ -150,7 +150,6 @@ export const Register = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="USER">Usuario Regular</SelectItem>
-                    <SelectItem value="ADMIN">Administrador</SelectItem>
                   </SelectContent>
                 </Select>
                 {/* <p className="text-xs text-muted-foreground">
