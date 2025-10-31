@@ -1,8 +1,10 @@
 import React from 'react'
+import { useNavigate } from 'react-router'
 import { MainLayout } from '@/layouts/MainLayout'
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Package, Users, ShoppingCart, TrendingUp, BarChart3, Zap } from "lucide-react"
 export const Home = () => {
+  const navigate = useNavigate()
   return (
     <MainLayout>
       <div className="space-y-12 py-12">
