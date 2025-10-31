@@ -109,7 +109,7 @@ export const Navbar = () => {
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-primary-foreground font-bold">D</span>
           </div>
-          <span className="hidden sm:inline">Digital IMS</span>
+          <span className="hidden sm:inline">LocalStore</span>
         </Link>
 
         {/* Desktop Navigation - Hidden on mobile */}
