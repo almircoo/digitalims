@@ -623,7 +623,7 @@ Flujo:
 \`\`\`
 
 #### **GET /v1/productos/{id}**
-\`\`\`
+```shell
 Propósito: Obtener detalles de un producto
 
 Operación:
@@ -633,10 +633,10 @@ Operación:
    - precio, stock, estado
    - categoria, fechaRegistro
    - inventario (si aplica)
-\`\`\`
+```
 
 #### **POST /v1/productos**
-\`\`\`
+```shell
 Propósito: Crear nuevo producto
 
 Seguridad:
@@ -648,10 +648,10 @@ Flujo:
 2. Crear Product entity
 3. Crear o actualizar Inventory
 4. Guardar en base de datos
-\`\`\`
+```
 
 #### **PUT /v1/productos/{id}**
-\`\`\`
+```
 Propósito: Actualizar producto
 
 Seguridad:
@@ -662,10 +662,10 @@ Operación:
 2. Actualizar campos: nombre, descripcion, precio, etc.
 3. Validar cambios en stock
 4. Guardar cambios
-\`\`\`
+```
 
 #### **DELETE /v1/productos/{id}**
-\`\`\`
+```shell
 Propósito: Eliminar producto
 
 Seguridad:
@@ -674,23 +674,23 @@ Seguridad:
 Validaciones:
 - No eliminar si hay órdenes pendientes con este producto
 - Marcar como inactivo (soft delete recomendado)
-\`\`\`
+```
 
 ---
 
 ### MÓDULO 4: CLIENTES
 
 #### **GET /v1/clientes**
-\`\`\`
+```shell
 Similar a productos con filtros dinámicos:
 - nombre, apellido, dni, email, telefono
 - fechaRegistro, direccion, estado
 
 Retorna: Payloads<List<CustomerResponse>>
-\`\`\`
+```
 
 #### **POST /v1/clientes**
-\`\`\`
+```shell
 Propósito: Registrar nuevo cliente
 
 Operación:
@@ -699,19 +699,19 @@ Operación:
 3. Crear Customer entity
 4. Asociar con usuario (userId)
 5. Guardar en base de datos
-\`\`\`
+```
 
 #### **PUT /v1/clientes/{id}**
-\`\`\`
+```shell
 Propósito: Actualizar datos del cliente
 
 Datos actualizables:
 - nombre, apellido, telefono, direccion
 - email, estado
-\`\`\`
+```
 
 #### **DELETE /v1/clientes/{id}**
-\`\`\`
+```shell
 Propósito: Eliminar cliente
 
 Seguridad:
@@ -720,14 +720,14 @@ Seguridad:
 Validaciones:
 - No eliminar si hay órdenes asociadas
 - Opción: Marcar como inactivo en su lugar
-\`\`\`
+```
 
 ---
 
 ### MÓDULO 5: REPORTES (ADMIN ONLY)
 
 #### **GET /v1/reportes/dashboard**
-\`\`\`
+```shell
 Propósito: Dashboard con métricas generales
 
 Parámetros:
@@ -750,10 +750,10 @@ Métricas incluidas:
 - cantidadOrdenes: count(orders)
 - promedioOrden: totalVentas / cantidadOrdenes
 - cantidadProductos: count(productos vendidos)
-\`\`\`
+```
 
 #### **GET /v1/reportes/ventas/periodo**
-\`\`\`
+```shell
 Propósito: Reporte de ventas en rango de fechas
 
 Query:
@@ -764,10 +764,10 @@ SELECT
 FROM orders o
 WHERE o.fecha_pedido BETWEEN ? AND ?
   AND o.estado = 'ENTREGADO';
-\`\`\`
+```
 
 #### **GET /v1/reportes/ventas/producto**
-\`\`\`
+```shell
 Propósito: Productos más vendidos en período
 
 Retorna: Page<Object[]> con paginación
@@ -786,10 +786,10 @@ WHERE o.fecha_pedido BETWEEN ? AND ?
 GROUP BY p.id, p.nombre
 ORDER BY SUM(d.cantidad) DESC
 LIMIT 10;
-\`\`\`
+```
 
 #### **GET /v1/reportes/clientes/top**
-\`\`\`
+```shell
 Propósito: Top clientes por gasto
 
 Retorna: Page<CustomerSould>
@@ -810,7 +810,7 @@ WHERE o.fechaPedido BETWEEN ? AND ?
 GROUP BY c.idCliente, c.nombre, c.apellido, c.email
 ORDER BY SUM(o.total) DESC
 LIMIT 10;
-\`\`\`
+```
 
 #### **Otros Reportes**
 - `/v1/reportes/ventas/categoria` - Ventas por categoría
@@ -891,7 +891,7 @@ Usuario (ADMIN/USER)
 
 ## Mapeo de Excepciones → Respuestas HTTP
 
-\`\`\`
+```shell
 BusinessException
 ├─> HTTP 400 BAD REQUEST
 ├─> Mensaje: "El email ya está registrado"
@@ -916,14 +916,14 @@ FieldInvalidException
 ├─> HTTP 400 BAD REQUEST
 ├─> Mensaje: Detalles de validación
 └─> Usado en: Validaciones de entrada
-\`\`\`
+```
 
 ---
 
 ## Estructura de Respuestas
 
 ### Éxito - 200 OK
-\`\`\`json
+```json
 {
   "data": {
     "id": 1,
@@ -933,10 +933,10 @@ FieldInvalidException
     "type": "Bearer"
   }
 }
-\`\`\`
+```
 
 ### Éxito - 201 CREATED
-\`\`\`json
+```json
 {
   "data": {
     "idPedido": 12345,
@@ -945,10 +945,10 @@ FieldInvalidException
     "fechaPedido": "2025-01-15T10:30:00"
   }
 }
-\`\`\`
+```
 
 ### Error - 400 BAD REQUEST
-\`\`\`json
+```json
 {
   "status": 400,
   "error": "VALIDATION_ERROR",
@@ -957,25 +957,25 @@ FieldInvalidException
     "email": "El email es requerido"
   }
 }
-\`\`\`
+```
 
 ### Error - 404 NOT FOUND
-\`\`\`json
+```json
 {
   "status": 404,
   "error": "RESOURCE_NOT_FOUND",
   "message": "Order no encontrada con ID: 9999"
 }
-\`\`\`
+```
 
 ### Error - 403 FORBIDDEN
-\`\`\`json
+```json
 {
   "status": 403,
   "error": "ACCESS_DENIED",
   "message": "No tiene permisos para acceder a este recurso"
 }
-\`\`\`
+```
 
 ---
 
